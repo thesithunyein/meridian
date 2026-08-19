@@ -17,3 +17,5 @@ public/source-logo.png
 source-logo.png
 .next-build.log
 tsconfig.tsbuildinfo
+
+.vercel

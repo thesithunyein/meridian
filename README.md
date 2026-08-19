@@ -166,6 +166,10 @@ public/             — brand kit + scanline bg
 
 ---
 
+## Maintainer
+
+Sithu Nyein — [sithunyein.mailto@gmail.com](mailto:sithunyein.mailto@gmail.com)
+
 ## License
 
 Apache-2.0.  Copyright 2026 Sithu Nyein.

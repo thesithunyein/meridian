@@ -20,19 +20,23 @@ export function Footer() {
             <li className="cell">pnpm bench</li>
             <li className="cell">pnpm seed</li>
           </ul>
-        </div>
-        <div>
-          <div className="text-ink-50 font-semibold mb-1">CONTACT</div>
-          <ul className="space-y-1">
-            <li>github · sis/meridian</li>
-            <li>discord · meridian-dev</li>
-            <li>license · Apache-2.0</li>
-            <li>
-              <span className="bullet ok mr-2">OK</span>
-              live · meridian.sithunyein.com
-            </li>
-          </ul>
-        </div>
+        </div>          <div>
+            <div className="text-ink-50 font-semibold mb-1">CONTACT</div>
+            <ul className="space-y-1">
+              <li>
+                <a href="mailto:sithunyein.mailto@gmail.com?subject=Meridian" className="underline decoration-dotted">
+                  email · sithunyein.mailto@gmail.com
+                </a>
+              </li>
+              <li>github · thesithunyein/meridian</li>
+              <li>discord · meridian-dev</li>
+              <li>license · Apache-2.0</li>
+              <li>
+                <span className="bullet ok mr-2">OK</span>
+                live · meridian.sithunyein.com
+              </li>
+            </ul>
+          </div>
       </div>
       <div className="border-t border-ink-600">
         <div className="mx-auto max-w-[1400px] px-6 py-3 flex items-center justify-between text-2xs uppercase tracking-widest text-ink-400">

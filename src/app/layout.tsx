@@ -11,7 +11,10 @@ export const metadata: Metadata = {
   title: { default: TITLE, template: "%s — Meridian" },
   description: DESC,
   applicationName: "Meridian",
-  authors: [{ name: "Sithu Nyein" }],
+  authors: [{ name: "Sithu Nyein", url: "https://meridian.sithunyein.com" }],
+  other: {
+    "publisher:email": "sithunyein.mailto@gmail.com",
+  },
   keywords: [
     "supply chain security",
     "npm",
