@@ -229,7 +229,7 @@ export default function Home() {
             </p>
 
             <div className="hero-actions">
-              <Link href="/scan/tanstack/react-virtual@3.10.8" className="btn btn-solid btn-hero appear appear--btn">
+              <Link href={`/scan/${encodeURIComponent("tanstack/react-virtual@3.10.8")}`} className="btn btn-solid btn-hero appear appear--btn">
                 Scan a package
               </Link>
               <Link href="/replay" className="btn btn-ghost btn-hero appear appear--side">
@@ -427,7 +427,7 @@ export default function Home() {
               <code className="cell-mono text-ink-50">{" "}pnpm seed && docker compose up -d hydradb</code>.
             </p>
             <div className="hero-actions">
-              <Link href="/scan/tanstack/react-virtual@3.10.8" className="btn btn-solid btn-hero">
+              <Link href={`/scan/${encodeURIComponent("tanstack/react-virtual@3.10.8")}`} className="btn btn-solid btn-hero">
                 Scan a real package
               </Link>
               <Link href="/how" className="btn btn-ghost btn-hero">
