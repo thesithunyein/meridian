@@ -20,8 +20,8 @@ export default function ReplayPage() {
             Trace a real <em>worm</em>.
           </h1>
           <p className="subtitle">
-            The canonical TanStack-worm 6-minute hijack — replayed as a deterministic timeline.
-            Every event is keyed to one of the six Cypress queries in our query layer.
+            The TanStack/react-virtual 3.10.8 hijack, replayed as a deterministic 6-minute
+            timeline. Each event is keyed to one of the six Cypher queries in the query layer.
           </p>
         </div>
 

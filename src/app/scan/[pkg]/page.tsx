@@ -48,12 +48,11 @@ export default async function ScanPage({ params }: { params: { pkg: string } }) 
             <span className="cell-mono text-ink-300">{pkg}</span>
           </div>
           <h1>
-            Know your <em>{result.package.split("@")[0]}</em> exposure.
+            <em>{result.package.split("@")[0]}</em> exposure.
           </h1>
           <p className="subtitle">
-            Six deterministic Cypher queries against HydraDB. Below is the verdict plus every
-            row that produced it. Click <strong className="text-ink-50">show cypher</strong> on
-            any tile to inspect the query.
+            Below is the verdict plus every row that produced it. Click{" "}
+            <strong className="text-ink-50">show cypher</strong> on any tile to inspect the query.
           </p>
         </div>
 

@@ -42,12 +42,11 @@ export default function HowPage() {
             <span className="text-ink-300">how it works</span>
           </div>
           <h1>
-            Six <em>tiles</em>, six queries, five minutes.
+            Six <em>tiles</em>, six queries, six Cypher.
           </h1>
           <p className="subtitle">
-            A six-tile response is six deterministic graph queries &mdash; never a model.
-            Every answer is reproducible: re-run the same query against a frozen snapshot
-            and you get the same rows back, byte for byte.
+            Every scan is six deterministic graph queries. Re-run the same query against a
+            frozen snapshot and you get the same rows back, byte for byte.
           </p>
         </div>
 

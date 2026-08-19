@@ -5,8 +5,10 @@ import { useEffect, useState, type ReactNode } from "react";
 
 type Item = { label: string; href: string };
 
+const SCAN = `/scan/${encodeURIComponent("tanstack/react-virtual@3.10.8")}`;
+
 const ITEMS: Item[] = [
-  { label: "Benefits",     href: "/scan/tanstack/react-virtual@3.10.8" },
+  { label: "Scan",         href: SCAN },
   { label: "How It Works", href: "/how" },
   { label: "Replay",       href: "/replay" },
   { label: "Bench",        href: "/bench" },
@@ -87,11 +89,11 @@ export function Nav({ active, children }: { active?: string; children?: ReactNod
           </nav>
 
           <Link
-            href="/scan/sample/evil-pkg@1.0.0"
+            href={`/scan/${encodeURIComponent("tanstack/react-virtual@3.10.8")}`}
             className="btn btn-solid header-cta"
             id="start"
           >
-            Start for Free
+            Open the sample scan
           </Link>
 
           <button

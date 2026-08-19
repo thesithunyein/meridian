@@ -1,9 +1,10 @@
 import Link from "next/link";
 
+const SCAN = `/scan/${encodeURIComponent("tanstack/react-virtual@3.10.8")}`;
+
 /**
- * AppFooter — Vesper-style minimal footer reused across /scan /replay
- * /bench /how. Mirrors the landing page's tape language: brand on the
- * left, three product link-pills in the middle, contact on the right.
+ * AppFooter — used on /scan /replay /bench /how. Same shape as the
+ * landing's footer: brand + nav pills + contact + a one-line tape.
  */
 export function Footer({ id }: { id?: string }) {
   return (
@@ -19,18 +20,17 @@ export function Footer({ id }: { id?: string }) {
           <div>
             <div className="text-ink-50 font-semibold tracking-tight">Meridian</div>
             <p className="text-ink-200 text-xs leading-relaxed">
-              Plain-English blast-radius engine for npm &amp; PyPI.
-              Built on HydraDB. Apache-2.0.
+              Blast-radius engine for npm &amp; PyPI. Built on HydraDB.
             </p>
           </div>
         </div>
 
         <div className="app-footer-links">
-          <Link className="nav-pill" href="/scan/tanstack/react-virtual@3.10.8">
-            Benefits
+          <Link className="nav-pill" href={SCAN}>
+            Scan
           </Link>
           <Link className="nav-pill" href="/how">
-            How It Works
+            How it works
           </Link>
           <Link className="nav-pill" href="/bench">
             Bench
@@ -39,7 +39,7 @@ export function Footer({ id }: { id?: string }) {
             Replay
           </Link>
           <Link className="nav-pill" href="/how#faqs">
-            FAQs
+            FAQ
           </Link>
         </div>
 
@@ -51,17 +51,16 @@ export function Footer({ id }: { id?: string }) {
           >
             sithunyein.mailto@gmail.com
           </a>
-          <div className="text-ink-300 text-xs mt-2">GitHub · thesithunyein/meridian</div>
-          <div className="text-ink-300 text-xs">Discord · meridian-dev</div>
+          <div className="text-ink-300 text-xs mt-2">
+            Source · github.com/thesithunyein/meridian
+          </div>
         </div>
       </div>
 
       <div className="app-footer-tape">
         <span>© 2026 Sithu Nyein</span>
         <span className="text-ink-400">Apache-2.0</span>
-        <span>
-          <span className="bullet ok mr-2">OK</span> live · meridian.sithunyein.com
-        </span>
+        <span>meridian.sithunyein.com</span>
       </div>
     </footer>
   );

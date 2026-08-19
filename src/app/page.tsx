@@ -53,19 +53,19 @@ const RECENT: RecAdvisory[] = [
 const FEATURES: Array<{ title: string; body: string }> = [
   {
     title: "One sentence. One fix.",
-    body: "You learn how exposed you are before your coffee gets cold. The verdict at the top of every scan is a single English line and a single command.",
+    body: "The verdict at the top of every scan is one English line and one shell command. Read the verdict, paste the command, done.",
   },
   {
-    title: "Six Cypher, not a model.",
-    body: "We never call an LLM. The headline question is one MATCH over the dependency graph; the maintainer cluster, the lockfile snapshot, the typosquat picker — five more. Every answer reproducible to the byte.",
+    title: "Six Cypher. No model.",
+    body: "The headline question is one MATCH over the dependency graph. Maintainer cluster, lockfile snapshot, typosquat picker — five more. Every tile's query is in src/lib/cypher.ts. Every answer is reproducible.",
   },
   {
-    title: "Apache-2.0. Forever free.",
-    body: "Meridian is open source at heart. Run it locally on a 5K-node fixture, point it at your company's HydraDB instance, or let our anonymous cloud do the work. No seat counts, no telemetry, no paywall.",
+    title: "Apache-2.0.",
+    body: "Source on GitHub. Run it locally on a 5K-node fixture. Point it at your own HydraDB instance. No seat counts, no telemetry, no paywall.",
   },
   {
-    title: "Lib for CI, CLI for ops.",
-    body: "Drop the @meridian/ci Action into any GitHub workflow to block merges when a tile reports crit/high. Pipe our Node CLI against a lockfile to paste one English sentence into your incident channel.",
+    title: "JSON for CI. URL for ops.",
+    body: "The scan page is a URL. The same data is /api/scan/<pkg>@<ver> as JSON — pipe it into any CI step and exit non-zero when a tile reports crit or high. Share the URL in your incident channel and the next operator clicks straight in.",
   },
   {
     title: "HydraDB-shaped benchmarks.",
@@ -80,27 +80,27 @@ const FEATURES: Array<{ title: string; body: string }> = [
 const FAQ: Array<{ q: string; a: string }> = [
   {
     q: "Does Meridian train on my data?",
-    a: "No. There is no model. Six Cypher queries against a graph, plus the deterministic replay fixture when no graph is reachable. Your lockfile, your advisories, and your taps stay on your machine.",
+    a: "No. There is no model. The six queries are in src/lib/cypher.ts. When HydraDB is unreachable the app hydrates from a deterministic 5K-node fixture. Your lockfile, your advisories, and your taps stay on your machine.",
   },
   {
-    q: "Why is there no 'pricing' page?",
-    a: "Because pricing is $0. We sell trust, not features. Meridian reads the public OSV feed, the public npm/PyPI registry, and the public GitHub API. If you need an enterprise install behind your firewall, the docker compose up and you're done.",
+    q: "Why is there no pricing page?",
+    a: "Pricing is $0. The code is Apache-2.0. If you need to run Meridian behind your firewall, `docker compose up` is the install.",
   },
   {
-    q: "How fast is it, really?",
-    a: "Cold start on a 5K-node / 18K-edge fixture: ~250 ms for the six queries in parallel. Hot reuse: ~80 ms. We publish the exact numbers on /bench against the canonical HydraDB benchmark columns.",
-  },
-  {
-    q: "Why is the headline a serif italic?",
-    a: "Because in the first six minutes of an incident, the rest of the page is noise. Italicising 'blast radius' forces the eye to the one word the CISO needs to read first. We stole that idea from Vesper.ai — it works.",
+    q: "How fast is it?",
+    a: "Cold start on the 5K-node / 18K-edge fixture: ~250 ms total for the six queries in parallel. Hot reuse: ~80 ms. The exact numbers are on /bench in HydraDB's native CSV shape.",
   },
   {
     q: "Can I host this myself?",
-    a: "Yes — `pnpm i && docker compose up -d hydradb && pnpm seed && pnpm dev`. The whole stack is Apache-2.0 and runs on a single laptop.",
+    a: "Yes. `pnpm i && pnpm dev` boots against the local 5K-node fixture with no Docker. Adding a real graph is `pnpm seed && docker compose up -d hydradb`.",
   },
   {
-    q: "Why a graph database and not a vector index?",
+    q: "Why a graph database, not a vector index?",
     a: "We don't want similar. We want 'every service that transitively resolves this exact version'. Vector search is the wrong tool. The headline Cypher is a 6-hop reverse traversal and it answers in milliseconds.",
+  },
+  {
+    q: "Where does the data come from?",
+    a: "Public feeds only: OSV, the GitHub Advisory Database, the npm and PyPI registries. On `pnpm seed` we parse ~20 real lockfiles and walk GitHub for maintainers. Nothing is scraped that isn't already public.",
   },
 ];
 
@@ -188,10 +188,10 @@ export default function Home() {
           </nav>
 
           <Link
-            href="/scan/sample/evil-pkg@1.0.0"
+            href={`/scan/${encodeURIComponent("tanstack/react-virtual@3.10.8")}`}
             className="btn btn-solid header-cta"
           >
-            Start for Free
+            Open the sample scan
           </Link>
 
           <button
@@ -223,17 +223,16 @@ export default function Home() {
             </h1>
 
             <p className="lede appear appear--soft">
-              Meridian runs six deterministic Cypher queries against HydraDB the moment a CVE drops.
-              Paste one compromised package name, get one English sentence and a fix command &mdash;
-              no model involved.
+              Paste one compromised package name. Get one English sentence and a fix command.
+              The path is six deterministic Cypher queries against HydraDB &mdash; no model involved.
             </p>
 
             <div className="hero-actions">
               <Link href="/scan/tanstack/react-virtual@3.10.8" className="btn btn-solid btn-hero appear appear--btn">
-                Try it with TanStack
+                Scan a package
               </Link>
               <Link href="/replay" className="btn btn-ghost btn-hero appear appear--side">
-                See live replay
+                Watch the replay
               </Link>
             </div>
           </div>
@@ -295,10 +294,10 @@ export default function Home() {
       {/* ---- FEATURES --------------------------------------------------- */}
       <section className="section">
         <div className="section-inner">
-          <h2>What comes out of one scan</h2>
+          <h2>What one scan returns</h2>
           <p className="lede">
-            A useful answer in six seconds, with no model and no telemetry. Each feature is a
-            tile that lights up in parallel; the headline is the verdict at the top.
+            Each tile lights up in parallel. The verdict line at the top is what an operator
+            reads; the Cypher under each tile is what a platform engineer pastes into HydraDB.
           </p>
 
           <div className="features-grid">
@@ -420,11 +419,11 @@ export default function Home() {
       <section className="section" id="pricing">
         <div className="section-inner">
           <div className="cta-card">
-            <h2>It's free. It always will be.</h2>
+            <h2>Run it yourself.</h2>
             <p>
-              Meridian reads the public OSV feed, the public npm and PyPI registries, and the public GitHub
-              API. No seat counts, no telemetry, no paywall. If you need an enterprise install behind your
-              firewall, run the docker compose and you're done.
+              Source on GitHub, no seat counts, no telemetry. The same code that runs meridian.sithunyein.com
+              runs on your laptop with <code className="cell-mono text-ink-50">pnpm i && pnpm dev</code>. Add a real graph with
+              <code className="cell-mono text-ink-50">{" "}pnpm seed && docker compose up -d hydradb</code>.
             </p>
             <div className="hero-actions">
               <Link href="/scan/tanstack/react-virtual@3.10.8" className="btn btn-solid btn-hero">
@@ -451,13 +450,12 @@ export default function Home() {
             <div>
               <div className="text-ink-50 font-semibold tracking-tight">Meridian</div>
               <p className="text-ink-200 text-xs leading-relaxed">
-                Plain-English blast-radius engine for npm &amp; PyPI.
-                Built on HydraDB. Apache-2.0.
+                Blast-radius engine for npm &amp; PyPI. Built on HydraDB.
               </p>
             </div>
           </div>
           <div className="app-footer-links">
-            <Link className="nav-pill" href="/scan/tanstack/react-virtual@3.10.8">Scan</Link>
+            <Link className="nav-pill" href={`/scan/${encodeURIComponent("tanstack/react-virtual@3.10.8")}`}>Scan</Link>
             <Link className="nav-pill" href="/replay">Replay</Link>
             <Link className="nav-pill" href="/bench">Bench</Link>
             <Link className="nav-pill" href="/how">How It Works</Link>
@@ -470,16 +468,15 @@ export default function Home() {
             >
               sithunyein.mailto@gmail.com
             </a>
-            <div className="text-ink-300 text-xs mt-2">GitHub · thesithunyein/meridian</div>
-            <div className="text-ink-300 text-xs">Discord · meridian-dev</div>
+            <div className="text-ink-300 text-xs mt-2">
+              Source · github.com/thesithunyein/meridian
+            </div>
           </div>
         </div>
         <div className="app-footer-tape">
           <span>© 2026 Sithu Nyein</span>
           <span className="text-ink-400">Apache-2.0</span>
-          <span>
-            <span className="bullet-bordered bullet-bordered--ok">OK</span> live · meridian.sithunyein.com
-          </span>
+          <span>meridian.sithunyein.com</span>
         </div>
       </footer>
     </div>

@@ -36,9 +36,9 @@ export default async function BenchPage() {
             HydraDB-shaped <em>bench</em>.
           </h1>
           <p className="subtitle">
-            We publish in the exact CSV shape HydraDB&apos;s own <code>examples/query_bench.rs</code> emits,
-            so the same tooling can read Meridian numbers alongside the upstream numbers.
-            <code>pnpm bench</code> writes the canonical file to <code>bench/out/cypher_bench.csv</code>.
+            Same CSV columns as <code>examples/query_bench.rs</code> in the HydraDB repo, so the
+            same tooling reads Meridian numbers alongside the upstream numbers. The canonical
+            file is also written to <code>bench/out/cypher_bench.csv</code> by <code>pnpm bench</code>.
           </p>
         </div>
 

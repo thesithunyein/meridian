@@ -1,13 +1,13 @@
-# Deploy Meridian to `meridian.sithunyein.com`
+# Deploy Meridian
 
-Two paths exist. Both run the same Next.js standalone build; only the
-ingress in front changes.
+Two paths to a public URL. Both run the same Next.js standalone build;
+only the ingress in front changes.
 
 ---
 
-## Path A — instant demo URL (~30 s, free)
+## Path A — fast public URL (~30 seconds)
 
-Best for a working demo URL with no DNS work.
+Use this when you want a public URL without touching DNS.
 
 ```bash
 cd ~/meridian
@@ -16,19 +16,19 @@ npm run build
 cd .next/standalone
 nohup node server.js -p 3000 -H 127.0.0.1 &
 
-# Tunnel it via Cloudflare's free quick-tunnel
+# Tunnel via Cloudflare's free quick-tunnel
 cloudflared tunnel --url http://127.0.0.1:3000
 #  →  https://<random>.trycloudflare.com
 ```
 
-The current live tunnel URL is saved to `meridian/.tunnel-url`. URLs are
-ephemeral — when `cloudflared` exits the URL stops resolving.
+The URL is saved to `meridian/.tunnel-url`. URLs here are ephemeral —
+when `cloudflared` exits, the URL stops resolving.
 
 ---
 
 ## Path B — `meridian.sithunyein.com` (custom domain)
 
-Requires three small steps.
+Three steps.
 
 ### 1. Add `sithunyein.com` (or just `meridian.sithunyein.com`) to Cloudflare
 
@@ -36,7 +36,7 @@ If the zone isn't on Cloudflare yet:
 
 1. Sign in to https://dash.cloudflare.com
 2. Add the zone: `sithunyein.com`
-3. Update the nameservers at your registrar to the Cloudflare ones
+3. Update the nameservers at your registrar to the ones Cloudflare shows
 4. Wait for the zone to activate (a few minutes)
 
 ### 2. Create a long-lived named Tunnel
@@ -47,7 +47,8 @@ cloudflared tunnel login
 cloudflared tunnel create meridian
 # →  Copy the UUID + creds file path
 
-# config — write to ~/.cloudflared/config.yml (or %USERPROFILE%\.cloudflared\config.yml)
+# config — write to ~/.cloudflared/config.yml
+# or %USERPROFILE%\.cloudflared\config.yml on Windows
 tunnel: <UUID>
 credentials-file: <path-to-credentials.json>
 ingress:
@@ -62,17 +63,15 @@ ingress:
 cloudflared tunnel route dns meridian meridian.sithunyein.com
 # → A 'meridian' → <tunnel-uuid>.cfargotunnel.com (auto-created)
 
-# now start the tunnel
 cloudflared tunnel run meridian
 ```
 
-Once the tunnel is up, `https://meridian.sithunyein.com` resolves to the
-Node server running on `127.0.0.1:3000` on your machine. The next deploy
-just needs `cloudflared tunnel run meridian` again.
+`https://meridian.sithunyein.com` now resolves to the Node server on
+your machine. Future restarts just need `cloudflared tunnel run meridian`.
 
 ### Optional — keep the tunnel + server alive on reboot
 
-Use `pm2`, `nssm`, `Task Scheduler`, or a simple Windows scheduled task to
+Use `pm2`, `nssm`, Task Scheduler, or a Windows scheduled task to
 re-run:
 
 ```
@@ -84,19 +83,19 @@ on every boot.
 
 ---
 
-## What you'll see
+## URLs
 
-| URL                                                       | What serves                       |
-|-----------------------------------------------------------|-----------------------------------|
-| `https://github.com/thesithunyein/meridian`               | This repo, Apache-2.0             |
-| `https://treated-carter-gmc-employer.trycloudflare.com`   | Trycloudflare tunnel, free, ephemeral |
-| `https://meridian.sithunyein.com`                         | Named tunnel + your DNS, permanent |
+| URL                                                       | What serves                                |
+|-----------------------------------------------------------|--------------------------------------------|
+| `https://github.com/thesithunyein/meridian`               | The repo. Apache-2.0.                       |
+| `https://meridian.sithunyein.com`                         | Named tunnel + your DNS. Permanent.        |
+| `https://<random>.trycloudflare.com`                      | Quick-tunnel. Free. Ephemeral.              |
 
 ---
 
-## When you wire env
+## Environment variables
 
-Set these in the same shell where `node server.js` runs:
+When `node server.js` starts, set:
 
 ```
 HYDRADB_URL=https://api.hydradb.com
@@ -105,7 +104,7 @@ HYDRADB_GRAPH=meridian
 HYDRADB_CELL_ID=cell-0
 ```
 
-…and `/api/health` flips from `source: fixture:deterministic-v1` to
+`/api/health` then flips from `source: fixture:deterministic-v1` to
 `source: hydradb:https://api.hydradb.com`. No reload needed.
 
 ---
@@ -113,8 +112,8 @@ HYDRADB_CELL_ID=cell-0
 ## Cost
 
 - Domain — your existing `sithunyein.com`
-- Cloudflare (free tier) — Tunnel + DNS + HTTPS — $0
+- Cloudflare free tier — Tunnel + DNS + HTTPS — $0
 - Node process on this machine — $0
 - HydraDB Cloud (when wired) — free hobby tier
 
-Total: **$0 for the demo, $0/month after**.
+Total: **$0 to run, $0/month to keep.**
