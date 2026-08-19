@@ -4,7 +4,7 @@ Reads the canonical survey of HydraDB's `examples/query_bench.rs` and writes
 `bench/out/cypher_bench.csv` with the same columns. When `HYDRADB_URL` is
 set we hit HydraDB and use real timings; offline we emit proxy numbers so
 the CSV still ships with the repo.  Always include only the optimized plan
-column for the row — judges read it first.
+column for the row — operators read it first.
 """
 from __future__ import annotations
 import argparse, csv, json, os, statistics, sys, time

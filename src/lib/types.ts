@@ -8,7 +8,7 @@ export interface Tile {
   title: string;          // human answer, e.g. "17 services exposed"
   subtitle: string;       // one-line context
   cypher: string;
-  shape: string;          // shape annotation for the judge
+  shape: string;          // shape annotation for the planner
   columns: string[];      // table columns
   rows: Array<Record<string, string | number | boolean>>;
   severity: Severity;

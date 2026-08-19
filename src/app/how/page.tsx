@@ -155,7 +155,7 @@ node .next/standalone/server.js`}
               </pre>
             </article>
             <article className="how-step stripe-border-strip stripe-border-strip--high">
-              <h3>Caveats judges should know</h3>
+              <h3>Caveats and known limits</h3>
               <ul className="space-y-3 text-xs text-ink-300 leading-relaxed">
                 <li>· When <code>HYDRADB_URL</code> is unset we hydrate from a deterministic 5K-node fixture so the app boots. The bench route reflects this in the <code>x-meridian-source</code> header.</li>
                 <li>· HydraDB&apos;s query budgets are strict (scan-edge cap / row cap). Tile 1&apos;s 4-hop traversal is the hottest &mdash; we publish the budget knob in <code>BENCH.md</code>.</li>

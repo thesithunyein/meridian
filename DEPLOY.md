@@ -7,7 +7,7 @@ ingress in front changes.
 
 ## Path A — instant demo URL (~30 s, free)
 
-Best for showing the judges a working site right now.
+Best for a working demo URL with no DNS work.
 
 ```bash
 cd ~/meridian
@@ -84,7 +84,7 @@ on every boot.
 
 ---
 
-## What the judges see
+## What you'll see
 
 | URL                                                       | What serves                       |
 |-----------------------------------------------------------|-----------------------------------|

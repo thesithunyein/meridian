@@ -3,7 +3,7 @@
 > The plain-English blast-radius engine for npm and PyPI.
 > Paste one compromised package name. Get one English sentence and a fix command.
 
-Meridian is a HydraDB-powered submit-to-the-hackathon project. The web app at
+Meridian is the plain-English blast-radius engine for npm and PyPI. The web app at
 [meridian.sithunyein.com](https://meridian.sithunyein.com) answers the six
 questions a founder, a CISO, an engineering manager, or an auditor must answer
 in the **first six minutes** of a supply-chain attack — without reading a graph.
@@ -24,8 +24,8 @@ without writing a one-off script first. Meridian answers that prompt with
 
 We don't ask a model for the answer. The path is deterministic graph software
 — every tile is one Cypher query against HydraDB, fully reproducible, fully
-traceable. The judge can hit `?` *Show Cypher* and copy the exact query that
-produced their answer.
+traceable. You can hit *Show Cypher* on any tile and copy the exact query that
+produced your answer.
 
 ---
 
@@ -120,7 +120,7 @@ zero matches.
 
 ---
 
-## What judges should look at first
+## Where to look first
 
 1. **`/`** — hero: search + LHS Worm Trace + the three-of-six tiles preview.
 2. **`/scan/tanstack%2Freact-virtual%403.10.8`** — the headline scan. Six tiles. Click `Show Cypher` on any tile to inspect the query that produced the answer.
@@ -174,4 +174,4 @@ Sithu Nyein — [sithunyein.mailto@gmail.com](mailto:sithunyein.mailto@gmail.com
 
 Apache-2.0.  Copyright 2026 Sithu Nyein.
 
-Built for Hack Hydra · Track 02A — Supply-chain blast radius.
+Made for supply-chain blast-radius work. Apache-2.0.

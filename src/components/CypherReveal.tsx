@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 /**
  * Colorized Cypher block — no syntax-highlighter dependency, hand-rolled.
  * Reads ~15 keywords and 4 token classes.  Uses a generous cell padding for
- * the "show me the proof" feeling judges want to see.
+ * the "show me the proof" feeling that operators get to see.
  */
 const KW = new Set([
   "MATCH", "OPTIONAL", "WHERE", "RETURN", "WITH", "ORDER", "BY",
