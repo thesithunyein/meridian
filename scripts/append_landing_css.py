@@ -1,154 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+"""Append the Meridian landing-page (Vesper design-system) CSS to globals.css.
 
-:root {
-  color-scheme: dark;
-  --grid: rgba(255, 255, 255, 0.04);
-}
+This script is run after install so the new globals.css contains both the
+legacy terminal styles (scan / replay / bench / how) and the new single-viewport
+landing styles.  The new section is appended verbatim so users can review the
+diff in two pieces.
+"""
+from pathlib import Path
 
-* {
-  -webkit-font-smoothing: antialiased;
-  font-feature-settings: "ss01", "cv11", "tnum";
-}
+ROOT = Path(r"C:\Users\sithu\meridian\src\app\globals.css")
+existing = ROOT.read_text(encoding="utf-8")
 
-html, body {
-  background: #050505;
-  color: #f5f5f5;
-  font-family: ui-monospace, "JetBrains Mono", "Cascadia Code", "IBM Plex Mono", Consolas, "Courier New", monospace;
-  font-size: 13px;
-  line-height: 1.55;
-}
-
-::selection {
-  background: #a3ff3a;
-  color: #050505;
-}
-
-/* Hairline divider used everywhere */
-.hr-line {
-  height: 1px;
-  background: linear-gradient(to right, transparent, #222, transparent);
-}
-
-/* Severity stripe — 2px colored bar on the left edge of a card */
-.stripe-crit { box-shadow: inset 2px 0 0 0 #ff3b30; }
-.stripe-high { box-shadow: inset 2px 0 0 0 #ff8a00; }
-.stripe-warn { box-shadow: inset 2px 0 0 0 #ffd60a; }
-.stripe-ok   { box-shadow: inset 2px 0 0 0 #00e676; }
-.stripe-info { box-shadow: inset 2px 0 0 0 #5ac8fa; }
-
-/* Bigger caret used in the giant search input */
-.cmd-caret::after {
-  content: "_";
-  display: inline-block;
-  margin-left: 2px;
-  color: #a3ff3a;
-  animation: caret 1.1s steps(1) infinite;
-}
-@keyframes caret {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
-}
-
-/* Quiet scrollbar */
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #222; border-radius: 0; }
-::-webkit-scrollbar-thumb:hover { background: #333; }
-
-/* Subtle grid pattern, used as a background under hero text */
-.dot-grid {
-  background-image: radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px);
-  background-size: 16px 16px;
-}
-
-/* Code blocks — the "Cypher reveal" buttons */
-.code {
-  background: #0a0a0a;
-  border: 1px solid #222;
-  border-radius: 2px;
-  padding: 14px 16px;
-  font-family: ui-monospace, "JetBrains Mono", "Cascadia Code", Consolas, monospace;
-  font-size: 12px;
-  color: #c8c8c8;
-  overflow-x: auto;
-  white-space: pre;
-  line-height: 1.55;
-}
-
-/* Minimal SaaS stable tabular cell */
-.cell {
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-/* Tape header — `MERIDIAN · STATUS · NODE` style */
-.tape {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 18px;
-  border-bottom: 1px solid #1c1c1c;
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  color: #888;
-  text-transform: uppercase;
-}
-
-/* Status-bullet: [OK], [!!], [CRT] */
-.bullet {
-  display: inline-block;
-  padding: 0 6px;
-  border: 1px solid #333;
-  font-size: 10px;
-  letter-spacing: 0.06em;
-}
-.bullet.ok   { color: #00e676; border-color: #00e676; }
-.bullet.warn { color: #ffd60a; border-color: #ffd60a; }
-.bullet.crit { color: #ff3b30; border-color: #ff3b30; }
-.bullet.high { color: #ff8a00; border-color: #ff8a00; }
-.bullet.info { color: #5ac8fa; border-color: #5ac8fa; }
-.bullet.idle { color: #888; border-color: #333; }
-
-.tile-button {
-  background: transparent;
-  border: 1px solid #1c1c1c;
-  color: #c8c8c8;
-  font-family: inherit;
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  padding: 4px 8px;
-  cursor: pointer;
-  text-transform: uppercase;
-}
-.tile-button:hover { border-color: #555; color: #fff; }
-
-/* The big search field — looks like a terminal prompt, no border-radius */
-.cmd-input {
-  width: 100%;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid #1c1c1c;
-  color: #f5f5f5;
-  font-family: inherit;
-  font-size: 22px;
-  line-height: 1.4;
-  padding: 18px 0 18px 36px;
-  outline: none;
-  caret-color: #a3ff3a;
-}
-.cmd-input::placeholder { color: #555; }
-.cmd-input:focus { border-bottom-color: #555; }
-
-/* Github-style "code" Cypher highlight (very minimal) */
-.cypher .kw  { color: #5ac8fa; }
-.cypher .str { color: #00e676; }
-.cypher .num { color: #ffd60a; }
-.cypher .com { color: #555; font-style: italic; }
-.cypher .fn  { color: #a3ff3a; }
-.cypher .rel { color: #ff8a00; }
-
+ADDITION = """
 
 /* ====================================================================
    MERIDIAN LANDING (Vesper design system) — single-viewport hero.
@@ -647,3 +509,7 @@ body.menu-open { overflow: hidden; }
   .hero-actions { flex-direction: column; align-items: stretch; }
   .hero-actions .btn { width: 100%; }
 }
+"""
+
+ROOT.write_text(existing + ADDITION, encoding="utf-8")
+print(f"globals.css updated: {len(ADDITION)} bytes appended; total = {(ROOT.stat().st_size)}")
