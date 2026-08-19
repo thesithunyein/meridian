@@ -1,42 +1,45 @@
 "use client";
 
 import { useState } from "react";
-import { SeverityBadge } from "@/components/SeverityBadge";
-import { CypherReveal } from "@/components/CypherReveal";
 import type { Tile } from "@/lib/types";
+import { CypherReveal } from "@/components/CypherReveal";
+
+const SEVERITY: Record<Tile["severity"], string> = {
+  crit: "glass-card glass-card--level-1 stripe-border-strip stripe-border-strip--crit",
+  high: "glass-card glass-card--level-1 stripe-border-strip stripe-border-strip--high",
+  warn: "glass-card glass-card--level-1 stripe-border-strip stripe-border-strip--warn",
+  ok:   "glass-card glass-card--level-1 stripe-border-strip stripe-border-strip--ok",
+  info: "glass-card glass-card--level-1 stripe-border-strip stripe-border-strip--info",
+};
 
 export function TilePanel({ t }: { t: Tile }) {
   const [open, setOpen] = useState(false);
   return (
-    <article className={`border border-ink-600 bg-ink-900 ${
-      t.severity === "crit" ? "stripe-crit"
-      : t.severity === "high" ? "stripe-high"
-      : t.severity === "warn" ? "stripe-warn"
-      : t.severity === "ok"   ? "stripe-ok"
-      : "stripe-info"
-    }`}>
-      <header className="px-4 py-3 border-b border-ink-600 flex items-center gap-3">
-        <SeverityBadge s={t.severity} />
+    <article className={SEVERITY[t.severity]}>
+      <header className="glass-card-header">
+        <span className={`bullet-bordered bullet-bordered--${t.severity}`}>
+          {t.severity.toUpperCase()}
+        </span>
         <h3 className="text-md font-semibold text-ink-50">{t.title}</h3>
-        <span className="ml-auto text-2xs uppercase tracking-widest text-ink-400 cell">
+        <span className="ml-auto text-2xs uppercase tracking-widest text-ink-400 cell-mono">
           {t.rows.length} rows · {t.duration_ms}ms
         </span>
       </header>
-      <p className="px-4 py-3 text-xs text-ink-300 border-b border-ink-600">
-        {t.subtitle}
-      </p>
-      <div className="px-4 py-3 max-h-[260px] overflow-auto">
+      <p className="glass-card-subtitle">{t.subtitle}</p>
+      <div className="glass-card-table">
         <table className="w-full text-xs">
           <thead className="text-2xs uppercase tracking-widest text-ink-400">
             <tr>
-              {t.columns.map((c) => <th key={c} className="text-left py-1 pr-3 cell">{c}</th>)}
+              {t.columns.map((c) => (
+                <th key={c} className="text-left py-1 pr-3 cell-mono">{c}</th>
+              ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-ink-700">
+          <tbody>
             {t.rows.slice(0, 30).map((row, i) => (
-              <tr key={i} className="hover:bg-ink-800">
+              <tr key={i} className="table-row-line">
                 {t.columns.map((c) => (
-                  <td key={c} className="py-1 pr-3 cell text-ink-200">
+                  <td key={c} className="py-1 pr-3 cell-mono text-ink-200">
                     {String(row[c] ?? "")}
                   </td>
                 ))}
@@ -50,21 +53,24 @@ export function TilePanel({ t }: { t: Tile }) {
           </div>
         )}
       </div>
-      <footer className="px-4 py-2 border-t border-ink-600 flex items-center justify-between">
+      <footer className="glass-card-footer">
         <button
           type="button"
-          className="tile-button"
+          className="btn btn-ghost btn-ghost--mini"
           onClick={() => setOpen((v) => !v)}
         >
           {open ? "▾ hide cypher" : "▸ show cypher"}
         </button>
-        <span className="text-2xs uppercase tracking-widest text-ink-400 cell">
+        <span className="text-2xs uppercase tracking-widest text-ink-400 cell-mono">
           shape · {t.shape}
         </span>
       </footer>
       {open && (
         <div className="px-4 pb-4">
-          <CypherReveal cypher={t.cypher} params={{ ecosystem: "npm", name: t.id.split("-")[0], version: "*" }} />
+          <CypherReveal
+            cypher={t.cypher}
+            params={{ ecosystem: "npm", name: t.id.split("-")[0], version: "*" }}
+          />
         </div>
       )}
     </article>

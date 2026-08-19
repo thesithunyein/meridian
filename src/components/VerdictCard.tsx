@@ -2,8 +2,14 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { SeverityBadge } from "@/components/SeverityBadge";
 import type { ScanResult } from "@/lib/types";
+
+const SEVERITY_CLASS: Record<"crit" | "high" | "warn" | "ok", string> = {
+  crit: "severity-bar severity-bar--crit",
+  high: "severity-bar severity-bar--high",
+  warn: "severity-bar severity-bar--warn",
+  ok:   "severity-bar severity-bar--ok",
+};
 
 export function VerdictCard({ result }: { result: ScanResult }) {
   const sev = useMemo<"crit" | "high" | "warn" | "ok">(() => {
@@ -25,38 +31,36 @@ export function VerdictCard({ result }: { result: ScanResult }) {
   const fixCmd = `pnpm update ${result.package.replace("@", "@^")}`;
 
   return (
-    <section className={`border border-ink-600 bg-ink-900 ${
-      sev === "crit" ? "stripe-crit" : sev === "high" ? "stripe-high" : sev === "warn" ? "stripe-warn" : "stripe-ok"
-    }`}>
-      <header className="px-5 py-3 border-b border-ink-600 flex items-center gap-3 text-2xs uppercase tracking-widest text-ink-300">
-        <SeverityBadge s={sev} />
-        <span>verdict</span>
+    <section className={`glass-card ${SEVERITY_CLASS[sev]}`}>
+      <header className="glass-card-header">
+        <span className={`bullet-bordered bullet-bordered--${sev}`}>{sev.toUpperCase()}</span>
+        <span className="text-2xs uppercase tracking-widest text-ink-300">verdict</span>
         <span className="text-ink-500">·</span>
-        <span className="cell">{result.package}</span>
-        <span className="ml-auto text-ink-400">generated {relative(new Date(result.generatedAt))}</span>
+        <span className="cell-mono text-ink-200">{result.package}</span>
+        <span className="ml-auto text-xs text-ink-400">{relative(new Date(result.generatedAt))}</span>
       </header>
-      <div className="px-5 py-6 grid gap-6 lg:grid-cols-12">
-        <pre className="lg:col-span-8 whitespace-pre-wrap text-md md:text-lg text-ink-50 leading-relaxed font-mono">
-{verdict}
-        </pre>
-        <div className="lg:col-span-4 space-y-4">
-          <div className="border border-ink-600 p-3">
+
+      <div className="glass-card-body">
+        <pre className="verdict-text whitespace-pre-wrap leading-snug">{verdict}</pre>
+
+        <div className="verdict-side">
+          <div className="glass-card-inner">
             <div className="text-2xs uppercase tracking-widest text-ink-400 mb-1">fix command</div>
-            <div className="cell text-md text-accent">$ {fixCmd}</div>
+            <div className="cell-mono text-md text-accent">$ {fixCmd}</div>
             <button
-              className="tile-button mt-3"
-              onClick={() => navigator.clipboard?.writeText(fixCmd)}
               type="button"
+              className="btn btn-ghost btn-ghost--mini mt-3"
+              onClick={() => navigator.clipboard?.writeText(fixCmd)}
             >
               ▸ copy
             </button>
           </div>
-          <div className="border border-ink-600 p-3">
+          <div className="glass-card-inner">
             <div className="text-2xs uppercase tracking-widest text-ink-400 mb-2">share</div>
-            <div className="cell text-xs text-ink-200 break-all">
+            <div className="cell-mono text-xs text-ink-200 break-all">
               {`https://meridian.sithunyein.com/scan/${encodeURIComponent(result.package)}`}
             </div>
-            <Link href="/replay" className="tile-button mt-3 inline-block">
+            <Link href="/replay" className="btn btn-ghost btn-ghost--mini mt-3">
               ▸ open replay
             </Link>
           </div>

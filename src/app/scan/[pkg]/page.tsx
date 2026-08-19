@@ -36,80 +36,91 @@ export default async function ScanPage({ params }: { params: { pkg: string } }) 
     };
   }
 
-  const tiles = result.tiles;
-
   return (
-    <main>
-      <Nav active={`/scan/${encodeURIComponent(pkg)}`} />
-
-      <section className="border-b border-ink-600">
-        <div className="mx-auto max-w-[1400px] px-6 py-10">
-          <div className="flex items-center gap-3 text-2xs uppercase tracking-widest text-ink-400 mb-4">
-            <Link href="/" className="hover:text-ink-50">home</Link>
+    <Nav active={`/scan/${encodeURIComponent(pkg)}`}>
+      <main className="app-main">
+        <div className="app-header-bar">
+          <div className="crumbs">
+            <Link href="/">home</Link>
             <span>›</span>
-            <span>scan</span>
+            <Link href="/how">scan</Link>
             <span>›</span>
-            <span className="cell">{pkg}</span>
+            <span className="cell-mono text-ink-300">{pkg}</span>
           </div>
-          <VerdictCard result={result as any} />
-          <div className="mt-6">
-            <CommandSearch initial={pkg} />
-          </div>
+          <h1>
+            Know your <em>{result.package.split("@")[0]}</em> exposure.
+          </h1>
+          <p className="subtitle">
+            Six deterministic Cypher queries against HydraDB. Below is the verdict plus every
+            row that produced it. Click <strong className="text-ink-50">show cypher</strong> on
+            any tile to inspect the query.
+          </p>
         </div>
-      </section>
 
-      <section className="border-b border-ink-600">
-        <div className="mx-auto max-w-[1400px] px-6 py-10">
-          <header className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-ink-50">The Six Tiles</h2>
-            <span className="text-2xs uppercase tracking-widest text-ink-400">
-              {result.totalMs}ms · {result.source}
-            </span>
-          </header>
-          <div className="grid md:grid-cols-2 gap-4">
-            {tiles.map((t) => (
-              <TilePanel key={t.id} t={t} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <div className="mx-auto max-w-[1400px] px-6 py-10 grid lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            {result.timeline && (
-              <WormTrace
-                events={result.timeline as any}
-                durationMs={360_000}
-                autoplay
-              />
-            )}
-          </div>
-          <aside className="space-y-4">
-            <div className="border border-ink-600 bg-ink-900 p-4">
-              <div className="text-2xs uppercase tracking-widest text-ink-400 mb-1">other recent exploits</div>
-              <ul className="text-xs space-y-1.5">
-                {SAMPLE_PACKAGES.filter((s) => s.pkg !== pkg).map((s) => (
-                  <li key={s.pkg}>
-                    <Link href={`/scan/${encodeURIComponent(s.pkg)}`} className="cell underline decoration-dotted">
-                      {s.pkg}
-                    </Link>
-                    <span className="text-ink-400 ml-2">{s.note}</span>
-                  </li>
-                ))}
-              </ul>
+        <section className="section">
+          <div className="section-inner">
+            <VerdictCard result={result as any} />
+            <div className="mt-6">
+              <CommandSearch initial={pkg} />
             </div>
-            <div className="border border-ink-600 bg-ink-900 p-4">
-              <div className="text-2xs uppercase tracking-widest text-ink-400 mb-2">share</div>
-              <div className="cell text-xs text-ink-200 break-all">
-                {`https://meridian.sithunyein.com/scan/${encodeURIComponent(pkg)}`}
+          </div>
+        </section>
+
+        <section className="section">
+          <div className="section-inner">
+            <header className="flex items-center justify-between mb-4">
+              <h2>The six tiles</h2>
+              <span className="text-2xs uppercase tracking-widest text-ink-400 cell-mono">
+                {result.totalMs}ms · {result.source}
+              </span>
+            </header>
+            <div className="grid md:grid-cols-2 gap-4">
+              {result.tiles.map((t) => (
+                <TilePanel key={t.id} t={t} />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="section">
+          <div className="section-inner grid lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              {result.timeline && (
+                <WormTrace
+                  events={result.timeline as any}
+                  durationMs={360_000}
+                  autoplay
+                />
+              )}
+            </div>
+            <aside className="replay-side">
+              <div className="glass-card glass-card--inset">
+                <div className="text-2xs uppercase tracking-widest text-ink-400 mb-1">other recent exploits</div>
+                <ul className="text-xs space-y-1.5">
+                  {SAMPLE_PACKAGES.filter((s) => s.pkg !== pkg).map((s) => (
+                    <li key={s.pkg}>
+                      <Link
+                        href={`/scan/${encodeURIComponent(s.pkg)}`}
+                        className="cell-mono underline decoration-dotted text-ink-50"
+                      >
+                        {s.pkg}
+                      </Link>
+                      <span className="text-ink-400 ml-2">{s.note}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div>
-          </aside>
-        </div>
-      </section>
-
+              <div className="glass-card glass-card--inset">
+                <div className="text-2xs uppercase tracking-widest text-ink-400 mb-2">share</div>
+                <div className="cell-mono text-xs text-ink-200 break-all">
+                  {`https://meridian.sithunyein.com/scan/${encodeURIComponent(pkg)}`}
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </main>
       <Footer />
-    </main>
+    </Nav>
   );
 }

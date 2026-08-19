@@ -42,6 +42,15 @@ const config: Config = {
         accent: "#a3ff3a",
       },
       fontFamily: {
+        sans: [
+          '"Inter"',
+          "system-ui",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          '"Segoe UI"',
+          "sans-serif",
+        ],
+        serif: ['"Instrument Serif"', '"Times New Roman"', "Times", "serif"],
         mono: [
           "ui-monospace",
           "'JetBrains Mono'",

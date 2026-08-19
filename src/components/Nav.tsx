@@ -1,61 +1,113 @@
 "use client";
 
 import Link from "next/link";
-import { BrandGlyph } from "@/components/BrandGlyph";
-import { cn } from "@/lib/cn";
+import { useEffect, useState, type ReactNode } from "react";
 
 type Item = { label: string; href: string };
 
 const ITEMS: Item[] = [
-  { label: "Scan", href: "/scan/sample/evil-pkg@1.0.0" },
-  { label: "Replay", href: "/replay" },
-  { label: "Bench", href: "/bench" },
-  { label: "How", href: "/how" },
+  { label: "Benefits",     href: "/scan/tanstack/react-virtual@3.10.8" },
+  { label: "How It Works", href: "/how" },
+  { label: "Replay",       href: "/replay" },
+  { label: "Bench",        href: "/bench" },
 ];
 
-export function Nav({ active }: { active?: string }) {
+/**
+ * AppHeader — Vesper-style nav reused across all routes.
+ *
+ * Wraps every page in the same shell:
+ *   .grain
+ *   .hero-photo (with .hero-photo-inner ambient atmosphere)
+ *   .page
+ *     .menu-backdrop
+ *     .header
+ *     children   ← route content (e.g. <main>, <Footer />)
+ * </Nav>
+ */
+export function Nav({ active, children }: { active?: string; children?: ReactNode }) {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const onResize = () => {
+      if (window.matchMedia("(min-width: 901px)").matches) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("resize", onResize);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    document.body.classList.toggle("menu-open", open);
+  }, [open]);
+
   return (
-    <header className="border-b border-ink-600">
-      <div className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-3">
-        <Link href="/" className="flex items-center gap-3 group">
-          <BrandGlyph size={28} className="shrink-0" />
-          <span className="text-md font-semibold tracking-tight text-ink-50">MERIDIAN</span>
-          <span className="hidden md:inline text-xs text-ink-300">blast-radius.engine</span>
-          <span className="md:hidden text-xs text-ink-300">v0.1</span>
-        </Link>
-        <nav className="flex items-center gap-1">
-          {ITEMS.map((it) => {
-            const isActive = active === it.href;
-            return (
-              <Link
-                key={it.href}
-                href={it.href}
-                className={cn(
-                  "tile-button",
-                  isActive && "text-ink-50 border-ink-300",
-                )}
-              >
-                {it.label}
-              </Link>
-            );
-          })}
-        </nav>
+    <>
+      <div className="grain" aria-hidden />
+      <div className="hero-photo" aria-hidden>
+        <div className="hero-photo-inner" />
       </div>
-      <div className="tape mx-auto max-w-[1400px]">
-        <div className="flex items-center gap-3">
-          <span className="bullet ok">OK</span>
-          <span>node: hydra-db.local:17687</span>
-          <span className="text-ink-500">·</span>
-          <span>bolt + https</span>
-          <span className="text-ink-500">·</span>
-          <span>cypher: openCypher 9</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="text-ink-300">window</span>
-          <span className="cell">Aug 12 — Aug 20, 23:59 PT</span>
-          <span className="bullet crit lg:inline">2D 4H</span>
-        </div>
+
+      <div className="page">
+        <div className="menu-backdrop" aria-hidden />
+
+        <header className="header">
+          <Link href="/" className="logo" aria-label="Meridian">
+            <svg viewBox="0 0 24 24" className="logo-mark" aria-hidden="true">
+              <path
+                d="M2 21 L2 3 L7 3 L12 13 L17 3 L22 3 L22 21 L17 21 L17 11 L13 17 L11 17 L7 11 L7 21 Z"
+                fill="currentColor"
+              />
+            </svg>
+            <span className="logo-word">
+              Meridian<span className="logo-suffix">.engine</span>
+            </span>
+          </Link>
+
+          <nav id="site-nav" aria-label="Primary" className="nav">
+            {ITEMS.map((it) => {
+              const isActive = active === it.href;
+              return (
+                <Link
+                  key={it.href}
+                  href={it.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className="nav-pill"
+                >
+                  {it.label}
+                </Link>
+              );
+            })}
+          </nav>
+
+          <Link
+            href="/scan/sample/evil-pkg@1.0.0"
+            className="btn btn-solid header-cta"
+            id="start"
+          >
+            Start for Free
+          </Link>
+
+          <button
+            type="button"
+            className="burger"
+            aria-controls="site-nav"
+            aria-expanded={open ? "true" : "false"}
+            aria-label={open ? "Close menu" : "Open menu"}
+            onClick={() => setOpen((v) => !v)}
+          >
+            <span /><span /><span />
+          </button>
+        </header>
+
+        {children}
       </div>
-    </header>
+    </>
   );
 }
