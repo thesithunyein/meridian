@@ -12,6 +12,7 @@ const ITEMS: Item[] = [
   { label: "How It Works", href: "/how" },
   { label: "Replay",       href: "/replay" },
   { label: "Bench",        href: "/bench" },
+  { label: "FAQ",          href: "/#faqs" },
 ];
 
 /**

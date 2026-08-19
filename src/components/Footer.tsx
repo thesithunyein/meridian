@@ -38,7 +38,7 @@ export function Footer({ id }: { id?: string }) {
           <Link className="nav-pill" href="/replay">
             Replay
           </Link>
-          <Link className="nav-pill" href="/how#faqs">
+          <Link className="nav-pill" href="/#faqs">
             FAQ
           </Link>
         </div>

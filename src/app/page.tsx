@@ -14,10 +14,11 @@ import { CypherReveal } from "@/components/CypherReveal";
 //   No submission / hackathon framing — this is a working product.
 // =====================================================================
 
+const SCAN = `/scan/${encodeURIComponent("tanstack/react-virtual@3.10.8")}`;
 const NAV: Array<{ label: string; href: string; appear: string; delay: string }> = [
-  { label: "Benefits",     href: "/scan/tanstack/react-virtual@3.10.8", appear: "appear--scale", delay: "0.16s" },
+  { label: "Benefits",     href: SCAN,                                 appear: "appear--scale", delay: "0.16s" },
   { label: "How It Works", href: "/how",                               appear: "appear--soft",  delay: "0.28s" },
-  { label: "FAQs",         href: "/how",   appear: "appear--scale", delay: "0.40s" },
+  { label: "FAQs",         href: "/how#faqs",                          appear: "appear--scale", delay: "0.40s" },
   { label: "Bench",        href: "/bench",                             appear: "appear--soft",  delay: "0.52s" },
 ];
 
