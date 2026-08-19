@@ -122,11 +122,19 @@ export default function Home() {
       {/* grain layer (top) */}
       <div className="grain" aria-hidden />
 
-      {/* hero photo substitute — pure-CSS atmosphere so we don't ship the
-          CloudFront video. Animated faint vertical column so the eye reads
-          "something happening" without flashing white. */}
+      {/* hero photo — the CloudFront video as a 100%-opacity wash.
+          Kept full-bleed by .hero-photo; ::after scrim lifts the text. */}
       <div className="hero-photo" aria-hidden>
-        <div className="hero-photo-inner" />
+        <video
+          className="hero-photo-video"
+          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260723_145606_ab143199-b593-4941-bb1b-9afca215416b.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          aria-hidden
+        />
       </div>
 
       <div className="page">

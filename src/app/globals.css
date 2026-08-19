@@ -241,6 +241,16 @@ html body { background: #000000 !important; color: #ffffff !important; }
 .hero-photo {
   position: fixed; inset: 0; z-index: 0; background: #000000;
   pointer-events: none; isolation: isolate;
+  overflow: hidden;
+}
+.hero-photo-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #000000;
+  opacity: 1;
+  filter: brightness(0.55) saturate(1.05);
 }
 .hero-photo::after {
   content: ""; position: absolute; inset: 0; z-index: 1;
