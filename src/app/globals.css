@@ -618,9 +618,12 @@ body.menu-open { overflow: hidden; }
   }
   .badge { margin-bottom: 8px; }
 }
+/* Desktop scroll restored — every page is allowed to overflow. The landing
+   still feels single-viewport because its hero fills the first 100dvh; the
+   inner pages now scroll naturally. */
 @media (min-width: 901px) {
-  html, body { height: 100%; overflow: hidden; }
-  body .page { height: 100vh; height: 100dvh; overflow: hidden; }
+  html, body { height: auto; overflow-y: auto; }
+  body .page { height: auto; min-height: 100dvh; overflow: visible; }
 }
 
 /* ≤ 900 — phone */
