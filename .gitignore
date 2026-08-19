@@ -1,0 +1,19 @@
+node_modules/
+.next/
+out/
+dist/
+.env
+.env.local
+.DS_Store
+*.log
+.turbo/
+.vercel/
+
+# Meridian
+corpus/cache/
+corpus/.seedlock
+bench/out/
+public/source-logo.png
+source-logo.png
+.next-build.log
+tsconfig.tsbuildinfo

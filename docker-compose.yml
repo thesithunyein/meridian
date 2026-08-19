@@ -1,0 +1,32 @@
+version: "3.9"
+services:
+  hydradb:
+    image: ghcr.io/hydra-db/hydradb:latest
+    container_name: meridian-hydradb
+    ports:
+      - "17687:17687"   # Bolt
+      - "18443:18443"   # HTTPS JSON
+      - "19091:19091"   # metrics
+    environment:
+      HYDRADB_BOOTSTRAP_CELL: meridian
+      HYDRADB_OBJECT_BACKEND: slatedb
+      HYDRADB_OBJECT_BUCKET:  meridian-graph
+      HYDRA_MAX_QUERY_SCAN_EDGES: "120000"
+      HYDRA_MAX_QUERY_INTERMEDIATE_ROWS: "20000"
+    volumes:
+      - ./.hydradb-data:/var/lib/hydradb
+    restart: unless-stopped
+
+  meridian-load:
+    build:
+      context: .
+      dockerfile: meridian_load.Dockerfile
+    depends_on: [hydradb]
+    environment:
+      HYDRADB_URL: http://hydradb:18443
+      HYDRADB_GRAPH: meridian
+      MERIDIAN_CORPUS: /corpus
+    volumes:
+      - ./corpus:/corpus:ro
+    command: ["meridian_load", "/corpus/manifest.json"]
+    restart: "no"

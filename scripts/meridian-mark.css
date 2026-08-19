@@ -1,0 +1,9 @@
+
+/* on dark backgrounds */
+.meridian-mark {
+  display: inline-block;
+  font: 700 1em/1 ui-monospace, "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+  color: #fff;
+  background: transparent;
+  letter-spacing: 0;
+}
