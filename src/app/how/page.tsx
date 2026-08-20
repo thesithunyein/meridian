@@ -1,34 +1,32 @@
 import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
-import { CypherReveal } from "@/components/CypherReveal";
-import { QUERIES, QUERY_TITLES } from "@/lib/cypher";
 
 const STEPS = [
   {
-    title: "1.  Seed the corpus",
-    body: "pnpm seed — pulls ~5K npm + PyPI packages, ~50 advisories from OSV, parses ~20 real lockfiles, walks GitHub for maintainers, and precomputes ~600 edit-distance typosquats against the top 10K packages. All idempotent. All in corpus/.",
+    num: "1",
+    title: "Paste a package name",
+    body: "Enter any npm or PyPI package. Meridian identifies the ecosystem automatically and fetches the dependency graph from HydraDB.",
   },
   {
-    title: "2.  Bring up HydraDB",
-    body: "docker compose up -d — pulls ghcr.io/hydra-db/hydradb:latest (free, OSS). On cold start the graph node binds 17687 (Bolt) / 18443 (HTTPS) / 19091 (metrics).  one worker is enough for our 5K-node fixture.",
+    num: "2",
+    title: "Six tiles light up",
+    body: "Each tile answers one security question in parallel: exposed services, compromised lockfiles, typosquat neighbours, maintainer clusters, and more.",
   },
   {
-    title: "3.  Ingest",
-    body: "pnpm ingest — forks examples/falkor_import.rs into meridian_load, reads corpus/manifest.json + corpus/nodes.jsonl + corpus/edges.jsonl, and bulk-loads the graph into the meridian cell. Sub-2s typical, idempotent on restart.",
+    num: "3",
+    title: "Copy the fix",
+    body: "The verdict at the top of the page is one English sentence and one shell command. Read it, paste it, done.",
   },
-  {
-    title: "4.  Tweak the query budget",
-    body: "pnpm budget --max-scan-edges 120000 — raises HydraDB's default cap so the 4–6-hop reverse traversal in tile 1 fits in budget. We ship a BENCH.md so the trade-off is reproducible.",
-  },
-  {
-    title: "5.  Run dev",
-    body: "pnpm dev — starts the Next.js app on http://localhost:3000 (loopback). On a CDN deploy, set HYDRADB_URL=https://api.hydradb.com and HYDRADB_API_KEY=… and Meridian uses the cloud path automatically.",
-  },
-  {
-    title: "6.  Ship",
-    body: "Deploy to meridian.sithunyein.com with next build && next start (Node standalone build) behind your reverse-proxy / Cloudflare / tunnel. Total infra cost: $0.",
-  },
+];
+
+const TILES = [
+  { name: "Exposed services", desc: "Which internal services transitively depend on this version?" },
+  { name: "Version intro", desc: "Which version of the dependency introduced the vulnerability?" },
+  { name: "Lockfile consumers", desc: "Which applications resolved the bad version while it was live?" },
+  { name: "Sibling packages", desc: "Which other packages share a maintainer or infrastructure?" },
+  { name: "Typosquats", desc: "Are there edit-distance neighbours registered nearby?" },
+  { name: "Blast radius", desc: "What is the complete blast radius across services + lockfiles?" },
 ];
 
 export default function HowPage() {
@@ -42,126 +40,80 @@ export default function HowPage() {
             <span className="text-ink-300">how it works</span>
           </div>
           <h1>
-            Six <em>tiles</em>, six queries, six Cypher.
+            Three steps to <em>know</em>.
           </h1>
           <p className="subtitle">
-            Every scan is six deterministic graph queries. Re-run the same query against a
-            frozen snapshot and you get the same rows back, byte for byte.
+            No installation, no configuration, no graph theory required.
+            Paste a package name and get your answer in seconds.
           </p>
         </div>
 
+        {/* ---- 3 STEPS ---- */}
         <section className="section">
           <div className="section-inner">
-            <div className="grid lg:grid-cols-2 gap-4">
+            <div className="steps-grid">
               {STEPS.map((s) => (
-                <article key={s.title} className="how-step">
+                <div key={s.num} className="step-card">
+                  <div className="step-num">{s.num}</div>
                   <h3>{s.title}</h3>
                   <p>{s.body}</p>
-                </article>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
+        {/* ---- THE SIX TILES ---- */}
         <section className="section">
           <div className="section-inner">
-            <h2>Schema</h2>
+            <h2>The six tiles</h2>
             <p className="lede">
-              Six node labels and nine relationship types. Every Cypher clause below uses
-              bound parameters so runtime interpolation is impossible.
+              Each tile answers one security question. All six run in parallel when you scan a package.
             </p>
-            <div className="grid lg:grid-cols-2 gap-4">
-              <article className="glass-card glass-card--level-1 stripe-border-strip stripe-border-strip--info">
-                <header className="glass-card-header">
-                  <span className="bullet-bordered bullet-bordered--info">node labels</span>
-                </header>
-                <ul className="text-sm text-ink-200 space-y-2 p-4 cell-mono">
-                  <li>( :Package  ecosystem:enum, name:string, version?:string )</li>
-                  <li>( :Version  ecosystem:enum, name:string, semver:string, first_published:date )</li>
-                  <li>( :Advisory id: string, severity:enum, published:date )</li>
-                  <li>( :Lockfile id:string, ecosystem:enum, snapshot_ts:datetime, compromised_window?:duration )</li>
-                  <li>( :Service id:string, team:string, env:enum )</li>
-                  <li>( :Maintainer id:string, ci_handle?:string )</li>
-                </ul>
-              </article>
-              <article className="glass-card glass-card--level-1 stripe-border-strip stripe-border-strip--info">
-                <header className="glass-card-header">
-                  <span className="bullet-bordered bullet-bordered--info">relationship types</span>
-                </header>
-                <ul className="text-sm text-ink-200 space-y-2 p-4 cell-mono">
-                  <li>( Package )-[:DEPENDS_ON]-&gt;( Package )</li>
-                  <li>( Package )-[:VERSION_OF]-&gt;( Package )</li>
-                  <li>( Maintainer )-[:MAINTAINS]-&gt;( Package )</li>
-                  <li>( Package )-[:HOSTED_ON &#123; ci:string &#125;]-&gt;( :Repo )</li>
-                  <li>( Package )-[:PUBLISHED_TO]-&gt;( :Repo )</li>
-                  <li>( Advisory )-[:AFFECTS]-&gt;( Version )</li>
-                  <li>( Lockfile )-[:RESOLVES]-&gt;( Version )</li>
-                  <li>( Service )-[:USES_LOCKFILE]-&gt;( Lockfile )</li>
-                  <li>( Package )-[:TYPOSQUAT_OF &#123; distance:int &#125;]-&gt;( Package )</li>
-                </ul>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <section className="section" id="faqs">
-          <div className="section-inner">
-            <h2>The six queries</h2>
-            <p className="lede">
-              These are the queries behind every tile. Each takes named parameters
-              ($ecosystem, $name, $version); no string interpolation of user input.
-            </p>
-            <div className="grid gap-4">
-              {(Object.keys(QUERIES) as (keyof typeof QUERIES)[]).map((id) => (
-                <article key={id} className="glass-card glass-card--level-1 stripe-border-strip stripe-border-strip--info">
-                  <header className="glass-card-header">
-                    <span className="bullet-bordered bullet-bordered--info">{id}</span>
-                    <h3 className="text-md font-semibold text-ink-50">{QUERY_TITLES[id]}</h3>
-                  </header>
-                  <div className="px-4 pb-4">
-                    <CypherReveal
-                      cypher={QUERIES[id].cypher}
-                      params={{ ecosystem: "npm", name: "tanstack/react-virtual", version: "3.10.8" }}
-                    />
+            <div className="tiles-grid">
+              {TILES.map((t) => (
+                <div key={t.name} className="tile-card">
+                  <div className="tile-header">
+                    <span className="tile-name">{t.name}</span>
                   </div>
-                </article>
+                  <p className="tile-desc">{t.desc}</p>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
+        {/* ---- UNDER THE HOOD ---- */}
         <section className="section">
-          <div className="section-inner grid md:grid-cols-2 gap-6 text-sm">
-            <article className="how-step stripe-border-strip stripe-border-strip--ok">
-              <h3>Deploy to meridian.sithunyein.com</h3>
-              <pre className="code">
-{`# local
-pnpm i
-pnpm seed
-docker compose up -d
-pnpm dev
-curl localhost:3000
-
-# production (Node standalone build)
-pnpm build
-node .next/standalone/server.js
-# bind 127.0.0.1:3000 → meridian.sithunyein.com behind nginx/caddy/cloudflare
-
-# cloud hydradb (optional)
-HYDRADB_URL=https://api.hydradb.com \\
-HYDRADB_API_KEY=hk_live_… \\
-node .next/standalone/server.js`}
-              </pre>
-            </article>
-            <article className="how-step stripe-border-strip stripe-border-strip--high">
-              <h3>Caveats and known limits</h3>
-              <ul className="space-y-3 text-xs text-ink-300 leading-relaxed">
-                <li>· When <code>HYDRADB_URL</code> is unset we hydrate from a deterministic 5K-node fixture so the app boots. The bench route reflects this in the <code>x-meridian-source</code> header.</li>
-                <li>· HydraDB&apos;s query budgets are strict (scan-edge cap / row cap). Tile 1&apos;s 4-hop traversal is the hottest &mdash; we publish the budget knob in <code>BENCH.md</code>.</li>
-                <li>· We do not run any LLM inside the answer path. No embeddings, no semantic search &mdash; pure Cypher.</li>
-                <li>· Bolt and HTTPS clients are optional. The HTTPS path is enough to count for &quot;meaningful use&quot;.</li>
-              </ul>
-            </article>
+          <div className="section-inner">
+            <h2>Under the hood</h2>
+            <p className="lede">
+              For developers: Meridian runs six deterministic Cypher queries against HydraDB.
+              The queries are in <code className="cell-mono text-ink-50">src/lib/cypher.ts</code>.
+            </p>
+            <div className="how-step">
+              <h3>Why a graph database?</h3>
+              <p>
+                Supply chain exposure is a transitive dependency problem. Vector search finds
+                similar packages; graph traversal finds every service that transitively resolves
+                a specific version. The headline query is a 6-hop reverse traversal.
+              </p>
+            </div>
+            <div className="how-step">
+              <h3>Why no LLM?</h3>
+              <p>
+                The six queries are reproducible. Same input, same output, byte for byte. There
+                is no model in the answer path.
+              </p>
+            </div>
+            <div className="how-step">
+              <h3>Run it locally</h3>
+              <p>
+                Clone the repo, run <code className="cell-mono text-ink-50">pnpm i &amp;&amp; pnpm dev</code> to boot
+                against a 5K-node fixture. Add a real graph with{" "}
+                <code className="cell-mono text-ink-50">docker compose up -d hydradb</code>.
+              </p>
+            </div>
           </div>
         </section>
       </main>

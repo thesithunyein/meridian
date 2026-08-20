@@ -1266,3 +1266,218 @@ main, .app-main {
   .cta-card { padding: 36px 22px; }
   .cta-card h2 { font-size: 26px; }
 }
+
+/* --- Hero search box ---------------------------------------------- */
+.hero-search {
+  margin-top: 28px;
+  max-width: 580px;
+}
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 4px;
+  transition: border-color 0.2s;
+}
+.search-box:focus-within {
+  border-color: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.08);
+}
+.search-icon {
+  width: 18px; height: 18px;
+  margin-left: 12px;
+  color: #9a9a9a;
+  flex-shrink: 0;
+}
+.search-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 12px 14px;
+  color: #ffffff;
+  font-size: 14px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.search-input::placeholder {
+  color: #666;
+}
+.search-btn {
+  flex-shrink: 0;
+  border-radius: 8px;
+  height: 40px;
+  padding: 0 20px;
+}
+.search-hint {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #666;
+  letter-spacing: 0.02em;
+}
+@media (max-width: 900px) {
+  .search-input { font-size: 13px; padding: 10px 10px; }
+  .search-btn { padding: 0 14px; }
+}
+
+/* --- Benefits grid (3 cards) ------------------------------------- */
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 32px;
+}
+.benefit-card {
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0));
+  padding: 28px 24px;
+  transition: border-color 0.2s;
+}
+.benefit-card:hover {
+  border-color: rgba(255,255,255,0.16);
+}
+.benefit-icon {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  margin-bottom: 16px;
+}
+.benefit-icon svg {
+  width: 18px; height: 18px;
+  color: #6b9fff;
+}
+.benefit-card h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+.benefit-card p {
+  margin: 0;
+  color: #9a9a9a;
+  font-size: 14px;
+  line-height: 1.6;
+}
+@media (max-width: 900px) {
+  .benefits-grid { grid-template-columns: 1fr; gap: 14px; }
+}
+
+/* --- Steps grid (3 steps) ---------------------------------------- */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 32px;
+}
+.step-card {
+  text-align: center;
+  padding: 28px 20px;
+}
+.step-num {
+  width: 40px; height: 40px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: rgba(107,159,255,0.15);
+  color: #6b9fff;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.step-card h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+.step-card p {
+  margin: 0;
+  color: #9a9a9a;
+  font-size: 14px;
+  line-height: 1.6;
+}
+@media (max-width: 900px) {
+  .steps-grid { grid-template-columns: 1fr; gap: 8px; }
+}
+
+/* --- Trust grid (3 cards) ----------------------------------------- */
+.trust-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 12px;
+}
+.trust-card {
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  background: rgba(8,8,8,0.4);
+  padding: 24px;
+}
+.trust-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #666;
+  margin-bottom: 4px;
+}
+.trust-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.trust-card p {
+  margin: 0;
+  color: #9a9a9a;
+  font-size: 13px;
+  line-height: 1.55;
+}
+@media (max-width: 900px) {
+  .trust-grid { grid-template-columns: 1fr; gap: 14px; }
+}
+
+/* --- Tiles grid (How It Works page) ------------------------------ */
+.tiles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 28px;
+}
+.tile-card {
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0));
+  padding: 20px;
+  transition: border-color 0.2s;
+}
+.tile-card:hover {
+  border-color: rgba(255,255,255,0.15);
+}
+.tile-header {
+  margin-bottom: 8px;
+}
+.tile-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+.tile-desc {
+  margin: 0;
+  font-size: 13px;
+  color: #9a9a9a;
+  line-height: 1.5;
+}
+@media (max-width: 900px) {
+  .tiles-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .tiles-grid { grid-template-columns: 1fr; }
+}

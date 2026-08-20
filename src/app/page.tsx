@@ -4,324 +4,266 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { QUERIES, QUERY_TITLES, hydrate } from "@/lib/cypher";
-import { CypherReveal } from "@/components/CypherReveal";
+import { useRouter } from "next/navigation";
 
 // =====================================================================
-//   REAL PRODUCT LANDING — Meridian.
-//   Single page. Above-the-fold: Vesper-style hero + 3 stats.
-//   Below the fold: Features · Recent exploits · Six queries · FAQ.
-//   No submission / hackathon framing — this is a working product.
+//   MERIDIAN LANDING — clean, product-first, Stripe/Linear style.
+//   One hero with search, 3 benefits, how-it-works, trust signals.
 // =====================================================================
 
-const SCAN = `/scan/${encodeURIComponent("tanstack/react-virtual@3.10.8")}`;
-const NAV: Array<{ label: string; href: string; appear: string; delay: string }> = [
-  { label: "Benefits",     href: SCAN,                                 appear: "appear--scale", delay: "0.16s" },
-  { label: "How It Works", href: "/how",                               appear: "appear--soft",  delay: "0.28s" },
-  { label: "FAQs",         href: "/#faqs",                             appear: "appear--scale", delay: "0.40s" },
-  { label: "Bench",        href: "/bench",                             appear: "appear--soft",  delay: "0.52s" },
+const NAV: Array<{ label: string; href: string }> = [
+  { label: "How it works", href: "/how" },
+  { label: "Docs",        href: "/how" },
+  { label: "Bench",       href: "/bench" },
 ];
 
-const DEFAULT_STATS = [
-  { label: "packages · edges indexed",   appear: "appear--stat", delay: "1.12s", icon: "workflow" as const },
-  { label: "ms p50 across six queries",  appear: "appear--stat", delay: "1.28s", icon: "download" as const },
-  { label: "Apache-2.0 · free",          appear: "appear--stat", delay: "1.44s", icon: "avatars" as const },
+const BENEFITS = [
+  {
+    icon: "zap",
+    title: "One sentence. One fix.",
+    body: "Paste a package name, get a plain-English verdict and a copy-paste fix command. No log diving, no CVE databases, no graph theory.",
+  },
+  {
+    icon: "shield",
+    title: "Graph-powered, not guessing.",
+    body: "Six deterministic queries walk your actual dependency tree — transitive exposure, lockfile snapshots, typosquat neighbours. Answers in seconds.",
+  },
+  {
+    icon: "lock",
+    title: "Free forever. No telemetry.",
+    body: "Apache-2.0 source on GitHub. Run it on your laptop behind your firewall. No seat counts, no cloud dependency, no tracking.",
+  },
 ];
 
-interface RecAdvisory {
-  pkg: string;
-  ver: string;
-  sev: "crit" | "high" | "warn";
-  advisory: string;
-  cve: string;
-  since: string;
+const STEPS = [
+  { num: "1", title: "Paste a package", body: "Type any npm or PyPI package name. e.g. tanstack/react-virtual or ua-parser-js." },
+  { num: "2", title: "See the blast radius", body: "Six tiles light up: exposed services, compromised lockfiles, typosquat neighbours, and more." },
+  { num: "3", title: "Copy the fix", body: "One shell command at the top of the page. Paste it into your terminal. Done." },
+];
+
+const FAQ: Array<{ q: string; body: string }> = [
+  {
+    q: "What packages can I scan?",
+    body: "Any npm or PyPI package. The engine walks the full transitive dependency tree — not just direct imports.",
+  },
+  {
+    q: "Do I need to install anything?",
+    body: "No. The hosted version at meridian.sithunyein.com works in your browser. For air-gapped environments, run it locally with Docker.",
+  },
+  {
+    q: "Is my data sent anywhere?",
+    body: "No telemetry, no analytics, no package names logged. The engine is Apache-2.0 — you can read the source.",
+  },
+  {
+    q: "How is this different from npm audit?",
+    body: "npm audit checks direct advisories. Meridian walks the full transitive graph — 6 hops deep — to find services that are exposed but don't appear in any audit output.",
+  },
+];
+
+interface LiveStats {
+  packages: number;
+  edges: number;
+  advisories: number;
 }
 
-const RECENT: RecAdvisory[] = [
-  { pkg: "tanstack/react-virtual", ver: "3.10.8", sev: "crit", advisory: "Token-stealer in `.claude/`",         cve: "GHSA-x7v8-9w7q-2m1k", since: "Aug 17" },
-  { pkg: "evil-pkg",               ver: "1.0.0",  sev: "crit", advisory: "Hijacked resolver backdoor",          cve: "GHSA-p3k7-r1d2-mb6n", since: "Aug 16" },
-  { pkg: "ua-parser-js",           ver: "0.7.30", sev: "high", advisory: "Malware via maintainer email breach",  cve: "GHSA-77vn-r9x4-7f6l", since: "Aug 14" },
-  { pkg: "node-ipc",               ver: "9.x",    sev: "high", advisory: "Protestware payload re-introduced",    cve: "GHSA-c9hp-7fxw-9r2b", since: "Aug 12" },
-  { pkg: "colors.js",              ver: "1.4.1",  sev: "warn", advisory: "Maintainer swatted — fork churn",      cve: "GHSA-2svq-7h6l-2p4m", since: "Aug 11" },
-  { pkg: "event-stream",           ver: "3.3.6",  sev: "warn", advisory: "Flatmap-epidemic legacy risk",         cve: "GHSA-m84m-3c45-7f8j", since: "Aug 09" },
-];
-
-const FEATURES: Array<{ title: string; body: string }> = [
-  {
-    title: "One sentence. One fix.",
-    body: "The verdict at the top of every scan is one English line and one shell command. Read the verdict, paste the command, done.",
-  },
-  {
-    title: "Six Cypher. No model.",
-    body: "The headline question is one MATCH over the dependency graph. Maintainer cluster, lockfile snapshot, typosquat picker — five more. Every tile's query is in src/lib/cypher.ts. Every answer is reproducible.",
-  },
-  {
-    title: "Apache-2.0.",
-    body: "Source on GitHub. Run it locally on a 5K-node fixture. Point it at your own HydraDB instance. No seat counts, no telemetry, no paywall.",
-  },
-  {
-    title: "JSON for CI. URL for ops.",
-    body: "The scan page is a URL. The same data is /api/scan/<pkg>@<ver> as JSON — pipe it into any CI step and exit non-zero when a tile reports crit or high. Share the URL in your incident channel and the next operator clicks straight in.",
-  },
-  {
-    title: "HydraDB-shaped benchmarks.",
-    body: "We publish bench numbers in the exact CSV column layout HydraDB's own query_bench.rs emits, so a platform engineer can read Meridian alongside upstream numbers without reformatting.",
-  },
-  {
-    title: "One of the six is enough to ship.",
-    body: "If the answer to tile #1 — 'which services are transitively exposed' — is empty, you can stop reading. If it returns 17, you already know whether to page the CISO before lunch.",
-  },
-];
-
-const FAQ: Array<{ q: string; a: string }> = [
-  {
-    q: "Does Meridian train on my data?",
-    a: "No. There is no model. The six queries are in src/lib/cypher.ts. When HydraDB is unreachable the app hydrates from a deterministic 5K-node fixture. Your lockfile, your advisories, and your taps stay on your machine.",
-  },
-  {
-    q: "Why is there no pricing page?",
-    a: "Pricing is $0. The code is Apache-2.0. If you need to run Meridian behind your firewall, `docker compose up` is the install.",
-  },
-  {
-    q: "How fast is it?",
-    a: "Cold start on the 5K-node / 18K-edge fixture: ~250 ms total for the six queries in parallel. Hot reuse: ~80 ms. The exact numbers are on /bench in HydraDB's native CSV shape.",
-  },
-  {
-    q: "Can I host this myself?",
-    a: "Yes. `pnpm i && pnpm dev` boots against the local 5K-node fixture with no Docker. Adding a real graph is `pnpm seed && docker compose up -d hydradb`.",
-  },
-  {
-    q: "Why a graph database, not a vector index?",
-    a: "We don't want similar. We want 'every service that transitively resolves this exact version'. Vector search is the wrong tool. The headline Cypher is a 6-hop reverse traversal and it answers in milliseconds.",
-  },
-  {
-    q: "Where does the data come from?",
-    a: "Public feeds only: OSV, the GitHub Advisory Database, the npm and PyPI registries. On `pnpm seed` we parse ~20 real lockfiles and walk GitHub for maintainers. Nothing is scraped that isn't already public.",
-  },
-];
-
 export default function Home() {
+  const router = useRouter();
   const root = useRef<HTMLDivElement | null>(null);
-  const [liveStats, setLiveStats] = useState<string[]>([
-    "packages · edges indexed",
-    "ms p50 across six queries",
-    "Apache-2.0 · free",
-  ]);
+  const [search, setSearch] = useState("");
+  const [stats, setStats] = useState<LiveStats | null>(null);
 
-  // Fetch live HydraDB graph stats on mount.
   useEffect(() => {
     fetch("/api/stats")
       .then((r) => r.json())
       .then((j) => {
-        if (j.ok) {
-          setLiveStats([
-            `${j.packages.toLocaleString()} packages · ${j.edges.toLocaleString()} edges`,
-            `${j.advisories} advisories · ${j.maintainers} maintainers`,
-            `Apache-2.0 · HydraDB · free forever`,
-          ]);
-        }
+        if (j.ok) setStats({ packages: j.packages, edges: j.edges, advisories: j.advisories });
       })
       .catch(() => {});
   }, []);
 
   useEffect(() => {
-    const isr2 = () =>
-      new Promise<void>((resolve) =>
-        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
-      );
-
     const rootEl = root.current;
     if (!rootEl) return;
     const appearEls = Array.from(rootEl.querySelectorAll<HTMLElement>(".appear"));
-    const heroPhoto = rootEl.querySelector<HTMLElement>(".hero-photo");
     const settled = new WeakSet<HTMLElement>();
-
-    const settle = (el: HTMLElement) => {
-      if (!el || settled.has(el)) return;
-      settled.add(el);
-      el.classList.add("is-in");
-    };
-
+    const settle = (el: HTMLElement) => { if (!el || settled.has(el)) return; settled.add(el); el.classList.add("is-in"); };
     const handleAnimEnd = (ev: AnimationEvent) => {
       const target = ev.target as HTMLElement | null;
       if (target && target.classList?.contains("appear")) settle(target);
     };
     document.addEventListener("animationend", handleAnimEnd);
-
-    void isr2().then(() => {
-      const anyRunning = appearEls.some((el) =>
-        el.getAnimations().some((a) => a.playState !== "finished"),
-      );
-      if (!anyRunning) {
-        for (const el of appearEls) settle(el);
-        if (heroPhoto) settle(heroPhoto);
-      }
-    });
-
-    return () => {
-      document.removeEventListener("animationend", handleAnimEnd);
-    };
+    const timer = setTimeout(() => { for (const el of appearEls) settle(el); }, 600);
+    return () => { document.removeEventListener("animationend", handleAnimEnd); clearTimeout(timer); };
   }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const pkg = search.trim();
+    if (!pkg) return;
+    router.push(`/scan/${encodeURIComponent(pkg)}`);
+  };
 
   return (
     <div ref={root}>
-      {/* Below-the-fold sections render with the same Vesper shell but
-          no scroll lock, so the user can scroll naturally. */}
       <div className="grain" aria-hidden />
       <div className="hero-photo" aria-hidden>
         <video
           className="hero-photo-video"
           src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260723_145606_ab143199-b593-4941-bb1b-9afca215416b.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
+          autoPlay muted loop playsInline preload="auto"
         />
       </div>
 
       <div className="page">
         <div className="menu-backdrop" aria-hidden />
 
+        {/* ---- HEADER ---- */}
         <header className="header">
-          <Link href="#top" className="logo" aria-label="Meridian">
+          <Link href="/" className="logo" aria-label="Meridian">
             <svg viewBox="0 0 24 24" className="logo-mark" aria-hidden="true">
-              <path
-                d="M2 21 L2 3 L7 3 L12 13 L17 3 L22 3 L22 21 L17 21 L17 11 L13 17 L11 17 L7 11 L7 21 Z"
-                fill="currentColor"
-              />
+              <path d="M2 21 L2 3 L7 3 L12 13 L17 3 L22 3 L22 21 L17 21 L17 11 L13 17 L11 17 L7 11 L7 21 Z" fill="currentColor" />
             </svg>
-            <span className="logo-word">
-              Meridian<span className="logo-suffix">.engine</span>
-            </span>
+            <span className="logo-word">Meridian</span>
           </Link>
 
           <nav id="site-nav" aria-label="Primary" className="nav">
             {NAV.map((item) => (
-              <Link key={item.href} href={item.href} className={`nav-pill appear ${item.appear}`}>
-                {item.label}
-              </Link>
+              <Link key={item.href} href={item.href} className="nav-pill appear appear--soft">{item.label}</Link>
             ))}
           </nav>
 
-          <Link
-            href={`/scan/${encodeURIComponent("tanstack/react-virtual@3.10.8")}`}
-            className="btn btn-solid header-cta"
-          >
-            Open the sample scan
-          </Link>
+          <Link href="/how" className="btn btn-solid header-cta">Get started</Link>
 
-          <button
-            type="button"
-            className="burger"
-            aria-controls="site-nav"
-            aria-label="Open menu"
-          >
+          <button type="button" className="burger" aria-controls="site-nav" aria-label="Open menu">
             <span /><span /><span />
           </button>
         </header>
 
-        {/* ---- HERO ------------------------------------------------------- */}
+        {/* ---- HERO ---- */}
         <main id="top" className="hero">
           <div className="hero-copy">
             <div className="badge appear appear--pop">
-              <svg className="badge-star" viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"
-                  fill="currentColor"
-                />
-              </svg>
-              <span>Plain-English blast radius</span>
+              <span>Supply chain security for npm &amp; PyPI</span>
             </div>
 
             <h1 className="headline">
               <span className="headline-line appear appear--mask">Know your <em>blast radius</em></span>
-              <span className="headline-line appear appear--mask">in seconds, not audits.</span>
+              <span className="headline-line appear appear--mask">before the attacker does.</span>
             </h1>
 
             <p className="lede appear appear--soft">
-              Paste one compromised package name. Get one English sentence and a fix command.
-              The path is six deterministic Cypher queries against HydraDB &mdash; no model involved.
+              Paste a package name. Meridian walks your dependency graph six hops deep
+              and tells you exactly which services are exposed — in plain English, in seconds.
             </p>
 
-            <div className="hero-actions">
-              <Link href={`/scan/${encodeURIComponent("tanstack/react-virtual@3.10.8")}`} className="btn btn-solid btn-hero appear appear--btn">
-                Scan a package
-              </Link>
-              <Link href="/replay" className="btn btn-ghost btn-hero appear appear--side">
-                Watch the replay
-              </Link>
-            </div>
+            {/* Interactive search */}
+            <form onSubmit={handleSearch} className="hero-search appear appear--btn">
+              <div className="search-box">
+                <svg className="search-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clipRule="evenodd" />
+                </svg>
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Paste a package name, e.g. tanstack/react-virtual"
+                  className="search-input"
+                  aria-label="Package name"
+                />
+                <button type="submit" className="btn btn-solid search-btn">Scan</button>
+              </div>
+              <p className="search-hint">Try: evil-pkg · ua-parser-js · node-ipc · event-stream</p>
+            </form>
           </div>
         </main>
       </div>
 
+      {/* ---- STATS BAR ---- */}
       <footer className="stats" id="stats">
-        {DEFAULT_STATS.map((s, i) => (
-          <span key={s.appear + i} className={`stat appear ${s.appear}`}>
-            {s.icon === "workflow" && (
-              <svg viewBox="0 0 24 24" className="stat-icon" aria-hidden="true">
-                <defs>
-                  <linearGradient id="wf-l" x1="3" y1="2" x2="14" y2="22" gradientUnits="userSpaceOnUse">
-                    <stop offset="0" stopColor="#ffffff" stopOpacity="0.38" />
-                    <stop offset="1" stopColor="#3a3a3a" stopOpacity="0.62" />
-                  </linearGradient>
-                  <linearGradient id="wf-r" x1="14" y1="2" x2="25" y2="22" gradientUnits="userSpaceOnUse">
-                    <stop offset="0" stopColor="#3a3a3a" stopOpacity="0.38" />
-                    <stop offset="1" stopColor="#ffffff" stopOpacity="0.62" />
-                  </linearGradient>
-                </defs>
-                <rect x="3.4"  y="2.6" width="7.2" height="18.8" rx="3.6" fill="url(#wf-l)" />
-                <rect x="13.4" y="2.6" width="7.2" height="18.8" rx="3.6" fill="url(#wf-r)" />
-                <rect x="9.2"  y="10.9" width="5.6" height="2.2" rx="1.1" fill="#4a4a4a" />
-              </svg>
-            )}
-            {s.icon === "download" && (
-              <svg viewBox="0 0 24 24" className="stat-icon" aria-hidden="true">
-                <rect x="2.4" y="2.4" width="19.2" height="19.2" rx="6.2" fill="#ffffff" />
-                <path
-                  d="M12 7.1v7.4M8.15 12.35L12 16.2l3.85-3.85"
-                  stroke="#111111" strokeWidth="1.85" strokeLinecap="round" strokeLinejoin="round"
-                  fill="none"
-                />
-              </svg>
-            )}
-            {s.icon === "avatars" && (
-              <svg viewBox="0 0 40 22" className="stat-icon-wide" aria-hidden="true">
-                <circle cx="10.2" cy="11" r="9.2" fill="#2b2b2b" />
-                <ellipse cx="10.2" cy="12.1" rx="4.15" ry="3.7" fill="#f4f4f4" />
-                <path d="M7.0 9.1L8.4 11.4L5.7 11.4Z" fill="#2b2b2b" />
-                <path d="M13.4 9.1L12.0 11.4L14.7 11.4Z" fill="#2b2b2b" />
-                <circle cx="8.7"  cy="11.0" r="0.7" fill="#1a1a1a" />
-                <circle cx="11.7" cy="11.0" r="0.7" fill="#1a1a1a" />
-                <circle cx="20.2" cy="11" r="9.2" fill="#ffffff" />
-                <circle cx="18.3" cy="11.0" r="1.7" fill="#1a1a1a" />
-                <circle cx="22.3" cy="11.0" r="1.7" fill="#1a1a1a" />
-                <ellipse cx="20.2" cy="13.6" rx="1.05" ry="0.9" fill="#1a1a1a" />
-                <path d="M16.4 16.1c1.5 2.6 6.0 2.6 7.6 0" stroke="#111111" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-                <circle cx="30.2" cy="11" r="9.2" fill="#f26b1d" />
-                <text x="30.2" y="15.1" fill="#ffffff" fontFamily="Inter, system-ui, sans-serif" fontWeight="700" fontSize="12.5" textAnchor="middle">m</text>
-              </svg>
-            )}
-            <span>{liveStats[i] ?? s.label}</span>
-          </span>
-        ))}
+        <span className="stat appear appear--stat">
+          <svg viewBox="0 0 24 24" className="stat-icon" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="currentColor" opacity=".5"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="currentColor" opacity=".7"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="currentColor" opacity=".7"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="currentColor" opacity=".5"/></svg>
+          <span>{stats ? `${stats.packages.toLocaleString()} packages indexed` : "Loading graph…"}</span>
+        </span>
+        <span className="stat appear appear--stat">
+          <svg viewBox="0 0 24 24" className="stat-icon" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" fill="none"/><path d="M12 7v5l3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+          <span>6 queries · &lt;300ms</span>
+        </span>
+        <span className="stat appear appear--stat">
+          <svg viewBox="0 0 24 24" className="stat-icon" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" opacity=".5"/><path d="M2 17l10 5 10-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/><path d="M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/></svg>
+          <span>Apache-2.0 · Free forever</span>
+        </span>
       </footer>
 
-      {/* ---- FEATURES --------------------------------------------------- */}
+      {/* ---- 3 BENEFITS ---- */}
       <section className="section">
         <div className="section-inner">
-          <h2>What one scan returns</h2>
-          <p className="lede">
-            Each tile lights up in parallel. The verdict line at the top is what an operator
-            reads; the Cypher under each tile is what a platform engineer pastes into HydraDB.
-          </p>
+          <h2 className="appear appear--soft">What Meridian does</h2>
+          <div className="benefits-grid">
+            {BENEFITS.map((b) => (
+              <article key={b.title} className="benefit-card appear appear--scale">
+                <div className="benefit-icon">
+                  {b.icon === "zap" && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>}
+                  {b.icon === "shield" && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>}
+                  {b.icon === "lock" && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>}
+                </div>
+                <h3>{b.title}</h3>
+                <p>{b.body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
 
-          <div className="features-grid">
-            {FEATURES.map((f) => (
-              <article key={f.title} className="feature-card">
-                <div className="feature-card-bullet" />
-                <h3>{f.title}</h3>
+      {/* ---- HOW IT WORKS (3 steps) ---- */}
+      <section className="section">
+        <div className="section-inner">
+          <h2 className="appear appear--soft">How it works</h2>
+          <div className="steps-grid">
+            {STEPS.map((s) => (
+              <div key={s.num} className="step-card appear appear--scale">
+                <div className="step-num">{s.num}</div>
+                <h3>{s.title}</h3>
+                <p>{s.body}</p>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <Link href="/how" className="btn btn-ghost">Read the full docs →</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ---- TRUST SIGNALS ---- */}
+      <section className="section">
+        <div className="section-inner">
+          <div className="trust-grid">
+            <div className="trust-card appear appear--soft">
+              <div className="trust-label">Powered by</div>
+              <div className="trust-value">HydraDB</div>
+              <p>Graph-native dependency traversal. Not vector search — real Cypher over your actual dependency tree.</p>
+            </div>
+            <div className="trust-card appear appear--soft">
+              <div className="trust-label">Open source</div>
+              <div className="trust-value">Apache-2.0</div>
+              <p>Read every query in src/lib/cypher.ts. Fork it, self-host it, audit it. No black boxes.</p>
+            </div>
+            <div className="trust-card appear appear--soft">
+              <div className="trust-label">Zero telemetry</div>
+              <div className="trust-value">No tracking</div>
+              <p>No package names sent, no analytics, no cookies. Your dependency graph stays on your machine.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---- FAQ ---- */}
+      <section className="section" id="faqs">
+        <div className="section-inner">
+          <h2 className="appear appear--soft">Frequently asked</h2>
+          <div className="faq-grid">
+            {FAQ.map((f, i) => (
+              <article key={i} className="faq-card appear appear--scale">
+                <h3>{f.q}</h3>
                 <p>{f.body}</p>
               </article>
             ))}
@@ -329,140 +271,30 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---- RECENT EXPLOITS ----------------------------------------------- */}
+      {/* ---- CTA ---- */}
       <section className="section">
         <div className="section-inner">
-          <header className="flex items-center justify-between mb-4">
-            <h2>Recent exploits · last 30 days</h2>
-            <span className="text-2xs uppercase tracking-widest text-ink-400">from OSV + GHSA</span>
-          </header>
-
-          <div className="table-card">
-            <table className="meridian-table">
-              <thead>
-                <tr>
-                  <th>package</th>
-                  <th>version</th>
-                  <th>severity</th>
-                  <th>advisory</th>
-                  <th>cve / ghsa</th>
-                  <th>first seen</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {RECENT.map((r) => (
-                  <tr key={r.pkg + r.cve}>
-                    <td className="cell-mono">
-                      <Link
-                        className="underline decoration-dotted"
-                        href={`/scan/${encodeURIComponent(`${r.pkg}@${r.ver}`)}`}
-                      >
-                        {r.pkg}
-                      </Link>
-                    </td>
-                    <td className="cell-mono">{r.ver}</td>
-                    <td>
-                      <span className={`bullet-bordered bullet-bordered--${r.sev}`}>
-                        {r.sev}
-                      </span>
-                    </td>
-                    <td>{r.advisory}</td>
-                    <td className="cell-mono text-ink-300">{r.cve}</td>
-                    <td className="cell-mono text-ink-300">{r.since}</td>
-                    <td className="text-right">
-                      <Link
-                        href={`/scan/${encodeURIComponent(`${r.pkg}@${r.ver}`)}`}
-                        className="btn-ghost-mini"
-                      >
-                        scan ›
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      {/* ---- SIX QUERIES ------------------------------------------------- */}
-      <section className="section" id="how-it-works">
-        <div className="section-inner">
-          <h2>The six queries you'll be running</h2>
-          <p className="lede">
-            Each tile paints the moment the page loads. Click <span className="cell-mono text-ink-50">show cypher</span> on
-            any tile to copy the query and run it yourself.
-          </p>
-
-          <div className="queries-grid">
-            {(Object.keys(QUERIES) as (keyof typeof QUERIES)[]).map((id) => (
-              <article key={id} className="query-card">
-                <header className="glass-card-header">
-                  <span className="bullet-bordered bullet-bordered--info">{id}</span>
-                  <span className="ml-auto text-2xs uppercase tracking-widest text-ink-400 cell-mono">
-                    {QUERY_TITLES[id]}
-                  </span>
-                </header>
-                <div className="px-4 pb-4">
-                  <CypherReveal
-                    cypher={hydrate(id, "npm", "tanstack/react-virtual", "3.10.8")}
-                    params={{ ecosystem: "npm", name: "tanstack/react-virtual", version: "3.10.8" }}
-                  />
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ---- FAQ --------------------------------------------------------- */}
-      <section className="section" id="faqs">
-        <div className="section-inner">
-          <h2>Frequently asked, plainly answered</h2>
-          <p className="lede">No hand-wavy answers, no upsells, no asterisks.</p>
-          <div className="faq-grid">
-            {FAQ.map((f, i) => (
-              <article key={i} className="faq-card">
-                <h3>{f.q}</h3>
-                <p>{f.a}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ---- CTA --------------------------------------------------------- */}
-      <section className="section" id="pricing">
-        <div className="section-inner">
           <div className="cta-card">
-            <h2>Run it yourself.</h2>
-            <p>
-              Source on GitHub, no seat counts, no telemetry. The same code that runs meridian.sithunyein.com
-              runs on your laptop with <code className="cell-mono text-ink-50">pnpm i && pnpm dev</code>. Add a real graph with
-              <code className="cell-mono text-ink-50">{" "}pnpm seed && docker compose up -d hydradb</code>.
-            </p>
+            <h2>Start scanning in seconds.</h2>
+            <p>Paste a package name above, or try a pre-built scan of a known compromise.</p>
             <div className="hero-actions">
               <Link href={`/scan/${encodeURIComponent("tanstack/react-virtual@3.10.8")}`} className="btn btn-solid btn-hero">
-                Scan a real package
+                Scan TanStack/react-virtual
               </Link>
-              <Link href="/how" className="btn btn-ghost btn-hero">
-                Read the docs
+              <Link href={`/scan/${encodeURIComponent("evil-pkg@1.0.0")}`} className="btn btn-ghost btn-hero">
+                Scan evil-pkg
               </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ---- Footer ------------------------------------------------------ */}
+      {/* ---- FOOTER ---- */}
       <footer className="app-footer">
         <div className="app-footer-grid">
           <div className="app-footer-brand">
             <svg viewBox="0 0 24 24" className="logo-mark" aria-hidden="true">
-              <path
-                d="M2 21 L2 3 L7 3 L12 13 L17 3 L22 3 L22 21 L17 21 L17 11 L13 17 L11 17 L7 11 L7 21 Z"
-                fill="currentColor"
-              />
+              <path d="M2 21 L2 3 L7 3 L12 13 L17 3 L22 3 L22 21 L17 21 L17 11 L13 17 L11 17 L7 11 L7 21 Z" fill="currentColor" />
             </svg>
             <div>
               <div className="text-ink-50 font-semibold tracking-tight">Meridian</div>
@@ -471,23 +303,18 @@ export default function Home() {
               </p>
             </div>
           </div>
+
           <div className="app-footer-links">
-            <Link className="nav-pill" href={`/scan/${encodeURIComponent("tanstack/react-virtual@3.10.8")}`}>Scan</Link>
-            <Link className="nav-pill" href="/replay">Replay</Link>
+            <Link className="nav-pill" href="/how">How it works</Link>
             <Link className="nav-pill" href="/bench">Bench</Link>
-            <Link className="nav-pill" href="/how">How It Works</Link>
+            <Link className="nav-pill" href="https://github.com/thesithunyein/meridian" target="_blank">GitHub</Link>
           </div>
+
           <div className="app-footer-contact">
             <div className="text-2xs uppercase tracking-widest text-ink-300 mb-2">contact</div>
-            <a
-              href="mailto:sithunyein.mailto@gmail.com?subject=Meridian"
-              className="text-ink-50 underline decoration-dotted"
-            >
+            <a href="mailto:sithunyein.mailto@gmail.com?subject=Meridian" className="text-ink-50 underline decoration-dotted">
               sithunyein.mailto@gmail.com
             </a>
-            <div className="text-ink-300 text-xs mt-2">
-              Source · github.com/thesithunyein/meridian
-            </div>
           </div>
         </div>
         <div className="app-footer-tape">

@@ -3,29 +3,16 @@
 import Link from "next/link";
 import { useEffect, useState, type ReactNode } from "react";
 
-type Item = { label: string; href: string };
-
-const SCAN = `/scan/${encodeURIComponent("tanstack/react-virtual@3.10.8")}`;
+type Item = { label: string; href: string; external?: boolean };
 
 const ITEMS: Item[] = [
-  { label: "Scan",         href: SCAN },
-  { label: "How It Works", href: "/how" },
-  { label: "Replay",       href: "/replay" },
-  { label: "Bench",        href: "/bench" },
-  { label: "FAQ",          href: "/#faqs" },
+  { label: "How it works", href: "/how" },
+  { label: "Bench",       href: "/bench" },
+  { label: "GitHub",      href: "https://github.com/thesithunyein/meridian", external: true },
 ];
 
 /**
- * AppHeader — Vesper-style nav reused across all routes.
- *
- * Wraps every page in the same shell:
- *   .grain
- *   .hero-photo (with .hero-photo-inner ambient atmosphere)
- *   .page
- *     .menu-backdrop
- *     .header
- *     children   ← route content (e.g. <main>, <Footer />)
- * </Nav>
+ * Nav — clean shell reused across all inner routes.
  */
 export function Nav({ active, children }: { active?: string; children?: ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -68,9 +55,7 @@ export function Nav({ active, children }: { active?: string; children?: ReactNod
                 fill="currentColor"
               />
             </svg>
-            <span className="logo-word">
-              Meridian<span className="logo-suffix">.engine</span>
-            </span>
+            <span className="logo-word">Meridian</span>
           </Link>
 
           <nav id="site-nav" aria-label="Primary" className="nav">
@@ -82,6 +67,7 @@ export function Nav({ active, children }: { active?: string; children?: ReactNod
                   href={it.href}
                   aria-current={isActive ? "page" : undefined}
                   className="nav-pill"
+                  {...(it.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                 >
                   {it.label}
                 </Link>
@@ -90,11 +76,11 @@ export function Nav({ active, children }: { active?: string; children?: ReactNod
           </nav>
 
           <Link
-            href={`/scan/${encodeURIComponent("tanstack/react-virtual@3.10.8")}`}
+            href="/"
             className="btn btn-solid header-cta"
             id="start"
           >
-            Open the sample scan
+            Scan a package
           </Link>
 
           <button
