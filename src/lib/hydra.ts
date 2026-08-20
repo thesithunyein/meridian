@@ -155,7 +155,7 @@ export async function graphStats(cfg: HydraConfig): Promise<{
           cell_id: cfg.cellId ?? "cell-0",
           query: `MATCH (n:${label}) RETURN count(*) AS c`,
         }),
-        signal: AbortSignal.timeout(5000),
+        signal: AbortSignal.timeout(10000),
       });
       if (!res.ok) return 0;
       const j: HydraDbRow = await res.json();
@@ -167,13 +167,12 @@ export async function graphStats(cfg: HydraConfig): Promise<{
     }
   }
 
-  const [packages, versions, advisories, maintainers, lockfiles] = await Promise.all([
-    count("Package"),
-    count("Version"),
-    count("Advisory"),
-    count("Maintainer"),
-    count("Lockfile"),
-  ]);
+  // Run counts sequentially to avoid tunnel connection issues with parallel requests.
+  const packages = await count("Package");
+  const versions = await count("Version");
+  const advisories = await count("Advisory");
+  const maintainers = await count("Maintainer");
+  const lockfiles = await count("Lockfile");
 
   // Estimate total edges from sum of relationships.
   let edges = 0;
@@ -196,7 +195,7 @@ export async function graphStats(cfg: HydraConfig): Promise<{
           cell_id: cfg.cellId ?? "cell-0",
           query: `MATCH (a)-[r:${rel}]->(b) RETURN count(*) AS c`,
         }),
-        signal: AbortSignal.timeout(5000),
+        signal: AbortSignal.timeout(10000),
       });
       if (res.ok) {
         const j: HydraDbRow = await res.json();
