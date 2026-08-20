@@ -352,6 +352,7 @@ export default function Home() {
           <span>© 2026 Sithu Nyein</span>
           <span className="text-ink-400">Apache-2.0</span>
           <span>meridian.sithunyein.com</span>
+          <a href="https://x.com/meridian_scm" target="_blank" rel="noopener noreferrer" className="text-ink-200 hover:text-white transition-colors">@meridian_scm</a>
         </div>
       </footer>
     </div>
