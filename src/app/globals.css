@@ -966,6 +966,11 @@ main, .app-main {
   border-color: rgba(255,255,255,0.30);
   background: rgba(255,255,255,0.08);
 }
+.app-footer-social-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
 @media (max-width: 900px) {
   .app-footer { padding: 32px 18px 96px; }
   .app-footer-grid { grid-template-columns: 1fr; }
