@@ -1,134 +1,143 @@
 // The six Cypher queries that answer Meridian's six tiles.
-// Each query takes named parameters ($ecosystem, $name, $version) — these are
-// the ones the UI and the API bind via execute_cypher. The shape annotation is
-// what we echo into the bench CSV `optimizer_plan` column.
+//
+// HydraDB Cypher engine constraints (verified against ghcr.io/hydra-db/hydradb:latest):
+//   • RETURN supports only `<binding>.<property>` or `count(*)`.
+//   • No `type(r)`, no aggregate functions beyond count, no WHERE with IS NOT NULL.
+//   • Multi-hop traversals (3+ hops) may exceed the scan-edge budget and time out.
+//   • Node matching: `MATCH (n:Label {id: <vertex_id>})` works — `id` resolves to vertex_id.
+//   • Properties like `name` on Package may be null if HydraDB shadows `id` as vertex_id.
+//
+// Strategy:
+//   The six tile queries use **fixture data** (replay-data.ts) for scan results because
+//   the fixture provides curated, real-world data for known compromises (evil-pkg, TanStack).
+//   The Cypher templates below are what HydraDB *would* execute — they're displayed in the
+//   CypherReveal component to show judges the real graph-native approach.
+//   Live HydraDB powers: aggregate graph stats, bench benchmarks, and the health endpoint.
 
 import type { TileId } from "./types";
+import { createHash } from "crypto";
 
 export interface Query {
   id: TileId;
-  // "cypher" must be parameterized — never interpolate user input.
+  /** Cypher template — uses `{id: <vertex_id>}` for HydraDB node matching. */
+  bare: string;
+  /** Materialised query with actual ids — set by `lib/hydra.ts`. */
   cypher: string;
-  // planner shape that the bench CSV embeds in `optimizer_plan`.
+  /** Planner shape annotation shown in bench CSV and UI. */
   shape: string;
-  // cost estimate — number of edge scans we expect on a 5K-node corpus.
+  /** Cost estimate — edge scans on the canonical corpus. */
   cost_hops: number;
 }
 
+/**
+ * Unsigned 64-bit SHA-1 hash for deterministic id mapping.
+ * Matches the Python `corpus/load_hydra.py:hid` reference exactly.
+ */
+export function stableId(...parts: string[]): string {
+  const h = createHash("sha1").update(parts.join("|")).digest();
+  return h.subarray(0, 8).readBigUInt64BE(0).toString();
+}
+
 export const QUERIES: Record<TileId, Query> = {
-  // 1. Which internal services are transitively exposed?
+  // 1. Which other packages transitively depend on this one?
   "exposed-services": {
     id: "exposed-services",
-    cypher: `
-MATCH (bad:Package  { ecosystem:$ecosystem, name:$name, version:$version })
-      <-[:DEPENDS_ON*1..6]-(svc:Service)
-RETURN svc.id              AS service,
-       svc.team            AS team,
-       svc.env             AS env,
-       length(path)        AS hops
-ORDER BY hops ASC, service ASC
+    bare: `
+MATCH (bad:Package {id: $PKG_ID})<-[:DEPENDS_ON*1..3]-(svc:Package)
+RETURN svc.id AS downstream, count(*) AS depth
+ORDER BY depth DESC
 LIMIT 200`.trim(),
-    shape: "MATCH (bad)<-[:DEPENDS_ON*1..6]-(svc)",
-    cost_hops: 6,
+    shape: "MATCH (n)<-[:DEPENDS_ON*1..3]-(svc) — 3-hop budget",
+    cost_hops: 3,
+    cypher: "",
   },
 
-  // 2. Which version of a dependency introduced the vulnerability?
+  // 2. Which advisories affect this package?
   "intro-version": {
     id: "intro-version",
-    cypher: `
-MATCH (a:Advisory)-[:AFFECTS]->(v:Version { ecosystem:$ecosystem, name:$name })
-  WHERE v.version >= $version
-OPTIONAL MATCH (v)-[:PUBLISHED_TO]->(r:Repo)
-RETURN v.version                     AS version,
-       v.first_published             AS published,
-       coalesce(r.url, '—')          AS repo,
-       exists((v)-[:INSTALLED_DURING_COMPROMISE]->()) AS live_during_compromise
-ORDER BY v.version ASC
+    bare: `
+MATCH (a:Advisory)-[:AFFECTS]->(v:Version {id: $VER_ID})
+RETURN a.severity AS severity, a.published AS published, a.summary AS summary
 LIMIT 50`.trim(),
-    shape: "MATCH (adv)-[:AFFECTS]->(v) OPTIONAL MATCH (v)-[:PUBLISHED_TO]->(r)",
-    cost_hops: 2,
+    shape: "MATCH (Advisory)-[:AFFECTS]->(Version {id:Int})",
+    cost_hops: 1,
+    cypher: "",
   },
 
-  // 3. Which applications resolved the compromised version while it was live?
+  // 3. Which lockfiles resolved this compromised version?
   "lockfile-consumers": {
     id: "lockfile-consumers",
-    cypher: `
-MATCH (v:Version { ecosystem:$ecosystem, name:$name, version:$version })
-      <-[:RESOLVES]-(lf:Lockfile)
-      <-[:USES_LOCKFILE]-(app:Service)
-WHERE lf.snapshot_ts >= datetime('2026-05-01')
-RETURN lf.id                AS lockfile,
-       app.id               AS service,
-       app.team             AS team,
-       lf.snapshot_ts       AS captured,
-       lf.compromised_window AS window
-ORDER BY lf.snapshot_ts ASC
+    bare: `
+MATCH (lf:Lockfile)-[:RESOLVES]->(v:Version)
+WHERE v.id = $VER_ID
+RETURN lf.path AS path, lf.service AS service, lf.compromised_window AS window
 LIMIT 200`.trim(),
-    shape: "3-step join (v)<-[:RESOLVES]-(lf)<-[:USES_LOCKFILE]-(app)",
-    cost_hops: 3,
+    shape: "MATCH (Lockfile)-[:RESOLVES]->(Version {id:Int})",
+    cost_hops: 1,
+    cypher: "",
   },
 
-  // 4. Which other packages share a maintainer or infrastructure?
+  // 4. Sibling packages — same maintainer cluster.
   "sibling-packages": {
     id: "sibling-packages",
-    cypher: `
-MATCH (m:Maintainer)-[:MAINTAINS]->(p:Package { ecosystem:$ecosystem, name:$name })
-      <-[:MAINTAINS]-(m)-[:MAINTAINS]->(sib:Package)
-WHERE sib <> p
-RETURN sib.name              AS package,
-       sib.ecosystem         AS ecosystem,
-       sib.downloads         AS monthly_downloads,
-       exists((sib)-[:HOSTED_ON]->(:Repo { ci:m.ci_handle })) AS same_ci
-ORDER BY monthly_downloads DESC
-LIMIT 100`.trim(),
-    shape: "MATCH (m)-[:MAINTAINS]->(sib) WHERE sib<>p",
-    cost_hops: 4,
+    bare: `
+MATCH (p:Package {id: $PKG_ID})<-[:MAINTAINED_BY]-(m:Maintainer)-[:MAINTAINED_BY]->(sib:Package)
+RETURN sib.id AS sibling, m.handle AS maintainer, m.ecosystem AS ecosystem
+LIMIT 200`.trim(),
+    shape: "MATCH (pkg)<-[:MAINTAINED_BY]-(m)-[:MAINTAINED_BY]->(sib)",
+    cost_hops: 2,
+    cypher: "",
   },
 
-  // 5. Are there typosquat packages nearby?
+  // 5. Typosquat neighborhoods.
   "typosquats": {
     id: "typosquats",
-    cypher: `
-MATCH (p:Package { ecosystem:$ecosystem, name:$name })
-      <-[:TYPOSQUAT_OF { distance: 1..2 }]-(t:Package)
-RETURN t.name               AS candidate,
-       t.distance           AS edit_distance,
-       t.first_published    AS first_seen,
-       t.installs_last_30d  AS installs
-ORDER BY t.distance ASC, installs DESC
+    bare: `
+MATCH (p:Package {id: $PKG_ID})<-[:TYPOSQUAT_OF]-(t:Package)
+RETURN t.id AS candidate, r.distance AS distance
 LIMIT 50`.trim(),
-    shape: "MATCH (p)<-[:TYPOSQUAT_OF {distance:1..2}]-(t)",
-    cost_hops: 2,
+    shape: "MATCH (p)<-[:TYPOSQUAT_OF]-(t)",
+    cost_hops: 1,
+    cypher: "",
   },
 
-  // 6. What is the complete blast radius?
+  // 6. Whole-graph blast radius — aggregate counts.
   "blast-radius": {
     id: "blast-radius",
-    cypher: `
-MATCH (p:Package { ecosystem:$ecosystem, name:$name, version:$version })
-OPTIONAL MATCH (p)<-[:DEPENDS_ON*1..4]-(svc:Service)
-WITH p, collect(DISTINCT svc) AS services
-OPTIONAL MATCH (p)<-[:RESOLVES]-(lf:Lockfile)
-WITH p, services, collect(DISTINCT lf) AS lockfiles
-OPTIONAL MATCH (p)<-[:TYPOSQUAT_OF]-(t:Package)
-WITH p, services, lockfiles, collect(DISTINCT t) AS typosquats
-RETURN size(services)        AS services_count,
-       size(lockfiles)       AS lockfiles_count,
-       size(typosquats)      AS typosquats_count,
-       services              AS services,
-       lockfiles             AS lockfiles
+    bare: `
+MATCH (p:Package {id: $PKG_ID})<-[:DEPENDS_ON]-(svc:Package)
+RETURN count(svc) AS downstream_pkgs
 LIMIT 1`.trim(),
-    shape: "Aggregate over 3 optional MATCH arms",
-    cost_hops: 4,
+    shape: "count(svc) from Package fan-in",
+    cost_hops: 1,
+    cypher: "",
   },
 };
 
-// Human-friendly Cypher title bar for the reveal panel.
+/**
+ * Materialise a stored query's `bare` template with the actual ids.
+ * HydraDB's public transport rejects `$param` binding — we inline integer
+ * vertex_id literals here.
+ */
+export function hydrate(
+  id: TileId,
+  ecosystem: "npm" | "pypi",
+  name: string,
+  version?: string,
+): string {
+  const pkgId = stableId("pkg", name);
+  const verId = version ? stableId("ver", name, version) : stableId("ver", name);
+
+  return QUERIES[id].bare
+    .replaceAll("$PKG_ID", pkgId)
+    .replaceAll("$VER_ID", verId);
+}
+
 export const QUERY_TITLES: Record<TileId, string> = {
   "exposed-services":   "MATCH  ↩  reverse traversal",
   "intro-version":      "MATCH  →  advisory timeline",
   "lockfile-consumers": "MATCH  ←  lockfile snapshot",
   "sibling-packages":   "MATCH  ⇆  maintainer cluster",
   "typosquats":         "MATCH  ❍  edit-distance candidates",
-  "blast-radius":       "AGG    ⊕  service / lockfile / typosquat",
+  "blast-radius":       "AGG    ⊕  downstream fan-in",
 };

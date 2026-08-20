@@ -8,6 +8,7 @@
 // HydraDB benchmarks — that's what `pnpm bench` does.
 
 import type { ScanResult, Tile, TileId, Severity } from "@/lib/types";
+import type { QueryResponse } from "@/lib/hydra";
 
 const NOW = "2026-08-19T22:00:00Z";
 
@@ -196,4 +197,29 @@ export const SAMPLE_PACKAGES = [
 
 export function severityCss(s: Severity) {
   return s;
+}
+
+
+/**
+ * Public helper used by `lib/hydra.ts` when a single tile needs to fall
+ * back to the deterministic fixture — it returns a HydraDB-shaped
+ * `QueryResponse` so the existing scan pipeline can use it without
+ * branching.
+ */
+export function fixtureTileFor(
+  id: TileId,
+  ecosystem: "npm" | "pypi",
+  name: string,
+  version: string | undefined,
+  reason: string,
+): QueryResponse & { error?: string } {
+  const t = tile(id, ecosystem, name, version, profileFor(name).services, profileFor(name).lockfiles, profileFor(name).siblings, profileFor(name).typos);
+  return {
+    columns: t.columns,
+    rows: t.rows.map((r) =>
+      t.columns.map((c) => (r as Record<string, string | number | boolean>)[c] ?? ""),
+    ),
+    stats: { durationMs: t.duration_ms, rows: t.rows.length, readEpoch: null, cellId: "fixture" } as any,
+    error: reason,
+  } as any;
 }

@@ -20,3 +20,6 @@ tsconfig.tsbuildinfo
 
 .vercel
 public/_tmp_how.html
+.hydradb-data/
+.hh.html
+.hh.txt

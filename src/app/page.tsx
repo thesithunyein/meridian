@@ -3,8 +3,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
-import { QUERIES, QUERY_TITLES } from "@/lib/cypher";
+import { useEffect, useRef, useState } from "react";
+import { QUERIES, QUERY_TITLES, hydrate } from "@/lib/cypher";
 import { CypherReveal } from "@/components/CypherReveal";
 
 // =====================================================================
@@ -22,15 +22,10 @@ const NAV: Array<{ label: string; href: string; appear: string; delay: string }>
   { label: "Bench",        href: "/bench",                             appear: "appear--soft",  delay: "0.52s" },
 ];
 
-const STATS: Array<{
-  label: string;
-  appear: string;
-  delay: string;
-  icon: "workflow" | "download" | "avatars";
-}> = [
-  { label: "5,124 packages · 18,772 edges indexed",      appear: "appear--stat", delay: "1.12s", icon: "workflow" },
-  { label: "<350 ms p95 across full hexa-traversal",    appear: "appear--stat", delay: "1.28s", icon: "download" },
-  { label: "Apache-2.0 · free for everyone",             appear: "appear--stat", delay: "1.44s", icon: "avatars"  },
+const DEFAULT_STATS = [
+  { label: "packages · edges indexed",   appear: "appear--stat", delay: "1.12s", icon: "workflow" as const },
+  { label: "ms p50 across six queries",  appear: "appear--stat", delay: "1.28s", icon: "download" as const },
+  { label: "Apache-2.0 · free",          appear: "appear--stat", delay: "1.44s", icon: "avatars" as const },
 ];
 
 interface RecAdvisory {
@@ -107,6 +102,27 @@ const FAQ: Array<{ q: string; a: string }> = [
 
 export default function Home() {
   const root = useRef<HTMLDivElement | null>(null);
+  const [liveStats, setLiveStats] = useState<string[]>([
+    "packages · edges indexed",
+    "ms p50 across six queries",
+    "Apache-2.0 · free",
+  ]);
+
+  // Fetch live HydraDB graph stats on mount.
+  useEffect(() => {
+    fetch("/api/stats")
+      .then((r) => r.json())
+      .then((j) => {
+        if (j.ok) {
+          setLiveStats([
+            `${j.packages.toLocaleString()} packages · ${j.edges.toLocaleString()} edges`,
+            `${j.advisories} advisories · ${j.maintainers} maintainers`,
+            `Apache-2.0 · HydraDB · free forever`,
+          ]);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const isr2 = () =>
@@ -241,8 +257,8 @@ export default function Home() {
       </div>
 
       <footer className="stats" id="stats">
-        {STATS.map((s) => (
-          <span key={s.label} className={`stat appear ${s.appear}`}>
+        {DEFAULT_STATS.map((s, i) => (
+          <span key={s.appear + i} className={`stat appear ${s.appear}`}>
             {s.icon === "workflow" && (
               <svg viewBox="0 0 24 24" className="stat-icon" aria-hidden="true">
                 <defs>
@@ -287,7 +303,7 @@ export default function Home() {
                 <text x="30.2" y="15.1" fill="#ffffff" fontFamily="Inter, system-ui, sans-serif" fontWeight="700" fontSize="12.5" textAnchor="middle">m</text>
               </svg>
             )}
-            <span>{s.label}</span>
+            <span>{liveStats[i] ?? s.label}</span>
           </span>
         ))}
       </footer>
@@ -390,7 +406,7 @@ export default function Home() {
                 </header>
                 <div className="px-4 pb-4">
                   <CypherReveal
-                    cypher={QUERIES[id].cypher}
+                    cypher={hydrate(id, "npm", "tanstack/react-virtual", "3.10.8")}
                     params={{ ecosystem: "npm", name: "tanstack/react-virtual", version: "3.10.8" }}
                   />
                 </div>

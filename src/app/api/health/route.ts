@@ -9,7 +9,7 @@ export function GET() {
     ok: true,
     source: cfg.url ? `hydradb:${cfg.url}` : "fixture:deterministic-v1",
     graph: cfg.graph ?? "meridian",
-    bolt: !!cfg.boltUrl,
+    cellId: cfg.cellId ?? "cell-0",
     now: new Date().toISOString(),
   });
 }

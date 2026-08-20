@@ -1,0 +1,14 @@
+{
+  "schema": "meridian-corpus-v1",
+  "generated": "2026-08-19T20:07:32Z",
+  "counts": {
+    "packages": 286,
+    "edges": 7500,
+    "versions": 1542,
+    "maintainers": 286,
+    "siblings": 40,
+    "typosquats": 548,
+    "advisories": 50,
+    "lockfiles": 20
+  }
+}
