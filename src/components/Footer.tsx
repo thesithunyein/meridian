@@ -8,7 +8,7 @@ export function Footer({ id }: { id?: string }) {
     <footer className="app-footer" id={id}>
       <div className="app-footer-powered">
         <span className="text-2xs uppercase tracking-widest text-ink-400">Powered by</span>
-        <img src="/hackhydra-logo.png" alt="HackHydra" className="hackhydra-logo" width={20} height={20} />
+        <img src="/hackhydra-logo.png" alt="HackHydra" className="hackhydra-logo" width={28} height={28} />
         <span className="text-ink-200 text-sm font-semibold">HackHydra</span>
       </div>
       <div className="app-footer-tape">

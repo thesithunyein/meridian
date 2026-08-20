@@ -1495,8 +1495,7 @@ main, .app-main {
   border-top: 1px solid rgba(255,255,255,0.06);
 }
 .hackhydra-logo {
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
-  border-radius: 3px;
 }
