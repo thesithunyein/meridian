@@ -120,29 +120,9 @@ Meridian stores the dependency graph in HydraDB and runs six deterministic Cyphe
 
 ## Architecture
 
-```
-┌───────────────────────────────────────────────────────────┐
-│                      CLIENT                                │
-│                                                            │
-│  ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐  │
-│  │Landing │ │  Scan  │ │Replay  │ │ Bench  │ │  How   │  │
-│  │   /    │ │/scan/* │ │/replay │ │ /bench │ │  /how  │  │
-│  └───┬────┘ └───┬────┘ └────────┘ └────────┘ └────────┘  │
-├──────┴──────────┴──────────────────────────────────────────┤
-│                       API                                   │
-│  /api/scan/[pkg]   /api/bench   /api/health   /api/stats   │
-├────────────────────────────────────────────────────────────┤
-│                    HYDRADB CLIENT                           │
-│  src/lib/hydra.ts  Bolt + HTTPS transports                 │
-├────────────────────────────────────────────────────────────┤
-│                     HYDRADB 0.7.2                           │
-│                                                            │
-│  Package  Version  Advisory  Lockfile  Maintainer          │
-│  DEPENDS_ON  MAINTAINED_BY  TYPOSQUAT_OF  AFFECTS          │
-│                                                            │
-│  5K nodes  18K edges  Cypher Engine  OpenCypher             │
-└────────────────────────────────────────────────────────────┘
-```
+<p align="center">
+  <img src="public/architecture.svg" alt="Meridian Architecture" width="800" />
+</p>
 
 ---
 
