@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 // =====================================================================
-//   MERIDIAN LANDING Ã¢ÂÂ clean, product-first, Stripe/Linear style.
+//   MERIDIAN LANDING — clean, product-first, Stripe/Linear style.
 //   One hero with search, 3 benefits, how-it-works, trust signals.
 // =====================================================================
 
@@ -26,7 +26,7 @@ const BENEFITS = [
   {
     icon: "shield",
     title: "Graph-powered, not guessing.",
-    body: "Six deterministic queries walk your actual dependency tree Ã¢ÂÂ transitive exposure, lockfile snapshots, typosquat neighbours. Answers in seconds.",
+    body: "Six deterministic queries walk your actual dependency tree — transitive exposure, lockfile snapshots, typosquat neighbours. Answers in seconds.",
   },
   {
     icon: "lock",
@@ -44,7 +44,7 @@ const STEPS = [
 const FAQ: Array<{ q: string; body: string }> = [
   {
     q: "What packages can I scan?",
-    body: "Any npm or PyPI package. The engine walks the full transitive dependency tree Ã¢ÂÂ not just direct imports.",
+    body: "Any npm or PyPI package. The engine walks the full transitive dependency tree — not just direct imports.",
   },
   {
     q: "Do I need to install anything?",
@@ -52,11 +52,11 @@ const FAQ: Array<{ q: string; body: string }> = [
   },
   {
     q: "Is my data sent anywhere?",
-    body: "No telemetry, no analytics, no package names logged. The engine is Apache-2.0 Ã¢ÂÂ you can read the source.",
+    body: "No telemetry, no analytics, no package names logged. The engine is Apache-2.0 — you can read the source.",
   },
   {
     q: "How is this different from npm audit?",
-    body: "npm audit checks direct advisories. Meridian walks the full transitive graph Ã¢ÂÂ 6 hops deep Ã¢ÂÂ to find services that are exposed but don't appear in any audit output.",
+    body: "npm audit checks direct advisories. Meridian walks the full transitive graph — 6 hops deep — to find services that are exposed but don't appear in any audit output.",
   },
 ];
 
@@ -121,7 +121,7 @@ export default function Home() {
         <header className="header">
           <Link href="/" className="logo" aria-label="Meridian">
             <svg viewBox="0 0 24 24" className="logo-mark" aria-hidden="true">
-              <path d="M2 2 L7 2 L7 16 L12 10 L12 2 L18 2 L18 22 L12 22 L12 14 L7 18 L7 22 L2 22 Z" fill="currentColor" />
+              <path d="M2 2 L7 2 L7 16 L12 10 L18 10 L18 22 L12 22 L12 16 L7 22 L2 22 Z" fill="currentColor" />
             </svg>
           </Link>
 
@@ -152,7 +152,7 @@ export default function Home() {
 
             <p className="lede appear appear--soft">
               Paste a package name. Meridian walks your dependency graph six hops deep
-              and tells you exactly which services are exposed Ã¢ÂÂ in plain English, in seconds.
+              and tells you exactly which services are exposed — in plain English, in seconds.
             </p>
 
             {/* Interactive search */}
@@ -239,7 +239,7 @@ export default function Home() {
             <div className="trust-card appear appear--soft">
               <div className="trust-label">Powered by</div>
               <div className="trust-value">HydraDB</div>
-              <p>Graph-native dependency traversal. Not vector search Ã¢ÂÂ real Cypher over your actual dependency tree.</p>
+              <p>Graph-native dependency traversal. Not vector search — real Cypher over your actual dependency tree.</p>
             </div>
             <div className="trust-card appear appear--soft">
               <div className="trust-label">Open source</div>
@@ -298,7 +298,7 @@ export default function Home() {
           <span className="text-ink-200 text-sm font-semibold">HackHydra</span>
         </div>
         <div className="app-footer-tape">
-          <span>Â© 2026 Sithu Nyein</span>
+          <span>© 2026 Sithu Nyein</span>
           <span className="text-ink-400">Apache-2.0</span>
           <span>meridian.sithunyein.com</span>
         </div>
