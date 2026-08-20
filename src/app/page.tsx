@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 // =====================================================================
-//   MERIDIAN LANDING â clean, product-first, Stripe/Linear style.
+//   MERIDIAN LANDING Ã¢ÂÂ clean, product-first, Stripe/Linear style.
 //   One hero with search, 3 benefits, how-it-works, trust signals.
 // =====================================================================
 
@@ -26,7 +26,7 @@ const BENEFITS = [
   {
     icon: "shield",
     title: "Graph-powered, not guessing.",
-    body: "Six deterministic queries walk your actual dependency tree â transitive exposure, lockfile snapshots, typosquat neighbours. Answers in seconds.",
+    body: "Six deterministic queries walk your actual dependency tree Ã¢ÂÂ transitive exposure, lockfile snapshots, typosquat neighbours. Answers in seconds.",
   },
   {
     icon: "lock",
@@ -44,7 +44,7 @@ const STEPS = [
 const FAQ: Array<{ q: string; body: string }> = [
   {
     q: "What packages can I scan?",
-    body: "Any npm or PyPI package. The engine walks the full transitive dependency tree â not just direct imports.",
+    body: "Any npm or PyPI package. The engine walks the full transitive dependency tree Ã¢ÂÂ not just direct imports.",
   },
   {
     q: "Do I need to install anything?",
@@ -52,11 +52,11 @@ const FAQ: Array<{ q: string; body: string }> = [
   },
   {
     q: "Is my data sent anywhere?",
-    body: "No telemetry, no analytics, no package names logged. The engine is Apache-2.0 â you can read the source.",
+    body: "No telemetry, no analytics, no package names logged. The engine is Apache-2.0 Ã¢ÂÂ you can read the source.",
   },
   {
     q: "How is this different from npm audit?",
-    body: "npm audit checks direct advisories. Meridian walks the full transitive graph â 6 hops deep â to find services that are exposed but don't appear in any audit output.",
+    body: "npm audit checks direct advisories. Meridian walks the full transitive graph Ã¢ÂÂ 6 hops deep Ã¢ÂÂ to find services that are exposed but don't appear in any audit output.",
   },
 ];
 
@@ -121,7 +121,7 @@ export default function Home() {
         <header className="header">
           <Link href="/" className="logo" aria-label="Meridian">
             <svg viewBox="0 0 24 24" className="logo-mark" aria-hidden="true">
-              <path d="M2 2 L8 2 L8 16 L14 10 L14 2 L20 2 L20 22 L14 22 L14 14 L8 20 L8 22 L2 22 Z" fill="currentColor" />
+              <path d="M2 2 L7 2 L7 16 L12 10 L12 2 L18 2 L18 22 L12 22 L12 14 L7 18 L7 22 L2 22 Z" fill="currentColor" />
             </svg>
           </Link>
 
@@ -152,7 +152,7 @@ export default function Home() {
 
             <p className="lede appear appear--soft">
               Paste a package name. Meridian walks your dependency graph six hops deep
-              and tells you exactly which services are exposed â in plain English, in seconds.
+              and tells you exactly which services are exposed Ã¢ÂÂ in plain English, in seconds.
             </p>
 
             {/* Interactive search */}
@@ -171,7 +171,7 @@ export default function Home() {
                 />
                 <button type="submit" className="btn btn-solid search-btn">Scan</button>
               </div>
-              <p className="search-hint">Try: evil-pkg Â· ua-parser-js Â· node-ipc Â· event-stream</p>
+              <p className="search-hint">Try: evil-pkg ÃÂ· ua-parser-js ÃÂ· node-ipc ÃÂ· event-stream</p>
             </form>
           </div>
         </main>
@@ -181,15 +181,15 @@ export default function Home() {
       <footer className="stats" id="stats">
         <span className="stat appear appear--stat">
           <svg viewBox="0 0 24 24" className="stat-icon" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="currentColor" opacity=".5"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="currentColor" opacity=".7"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="currentColor" opacity=".7"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="currentColor" opacity=".5"/></svg>
-          <span>{stats ? `${stats.packages.toLocaleString()} packages indexed` : "Loading graphâ¦"}</span>
+          <span>{stats ? `${stats.packages.toLocaleString()} packages indexed` : "Loading graphÃ¢ÂÂ¦"}</span>
         </span>
         <span className="stat appear appear--stat">
           <svg viewBox="0 0 24 24" className="stat-icon" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" fill="none"/><path d="M12 7v5l3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-          <span>6 queries Â· &lt;300ms</span>
+          <span>6 queries ÃÂ· &lt;300ms</span>
         </span>
         <span className="stat appear appear--stat">
           <svg viewBox="0 0 24 24" className="stat-icon" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" opacity=".5"/><path d="M2 17l10 5 10-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/><path d="M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/></svg>
-          <span>Apache-2.0 Â· Free forever</span>
+          <span>Apache-2.0 ÃÂ· Free forever</span>
         </span>
       </footer>
 
@@ -227,7 +227,7 @@ export default function Home() {
             ))}
           </div>
           <div className="text-center mt-8">
-            <Link href="/how" className="btn btn-ghost">Read the full docs â</Link>
+            <Link href="/how" className="btn btn-ghost">Read the full docs Ã¢ÂÂ</Link>
           </div>
         </div>
       </section>
@@ -239,7 +239,7 @@ export default function Home() {
             <div className="trust-card appear appear--soft">
               <div className="trust-label">Powered by</div>
               <div className="trust-value">HydraDB</div>
-              <p>Graph-native dependency traversal. Not vector search â real Cypher over your actual dependency tree.</p>
+              <p>Graph-native dependency traversal. Not vector search Ã¢ÂÂ real Cypher over your actual dependency tree.</p>
             </div>
             <div className="trust-card appear appear--soft">
               <div className="trust-label">Open source</div>
@@ -290,8 +290,15 @@ export default function Home() {
 
       {/* ---- FOOTER ---- */}
       <footer className="app-footer">
+        <div className="app-footer-powered">
+          <span className="text-2xs uppercase tracking-widest text-ink-400">Powered by</span>
+          <svg viewBox="0 0 24 24" className="hackhydra-logo" aria-label="HackHydra">
+            <path d="M2 2 L7 2 L7 8 L2 8 Z M12 2 L17 2 L17 8 L12 8 Z M5 5 L14 5 L14 11 L5 11 Z M2 12 L7 12 L7 22 L2 22 Z M12 12 L17 12 L17 22 L12 22 Z M5 16 L14 16 L14 22 L5 22 Z" fill="#FF6B35"/>
+          </svg>
+          <span className="text-ink-200 text-sm font-semibold">HackHydra</span>
+        </div>
         <div className="app-footer-tape">
-          <span>© 2026 Sithu Nyein</span>
+          <span>Â© 2026 Sithu Nyein</span>
           <span className="text-ink-400">Apache-2.0</span>
           <span>meridian.sithunyein.com</span>
         </div>

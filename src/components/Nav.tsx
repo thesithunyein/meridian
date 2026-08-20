@@ -51,7 +51,7 @@ export function Nav({ active, children }: { active?: string; children?: ReactNod
           <Link href="/" className="logo" aria-label="Meridian">
             <svg viewBox="0 0 24 24" className="logo-mark" aria-hidden="true">
               <path
-                d="M2 2 L8 2 L8 16 L14 10 L14 2 L20 2 L20 22 L14 22 L14 14 L8 20 L8 22 L2 22 Z"
+                d="M2 2 L7 2 L7 16 L12 10 L12 2 L18 2 L18 22 L12 22 L12 14 L7 18 L7 22 L2 22 Z"
                 fill="currentColor"
               />
             </svg>
