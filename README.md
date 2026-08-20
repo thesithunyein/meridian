@@ -15,7 +15,7 @@
 <p align="center">Six deterministic Cypher queries against <a href="https://github.com/hydra-db/hydradb"><strong>HydraDB</strong></a>.<br/>No LLM. No vector search. Reproducible to the byte.</p>
 
 <p align="center">
-  <img src="public/solution.svg" alt="Meridian Scan" width="700" />
+  <img src="public/meridian-preview.png" alt="Meridian" width="700" style="border-radius: 12px; border: 1px solid #e5e7eb;" />
 </p>
 
 <p align="center"><strong>Without HydraDB, Meridian cannot walk 6-hop dependency trees, run deterministic Cypher queries, or output HydraDB-compatible benchmarks.</strong></p>
