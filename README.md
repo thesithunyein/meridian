@@ -18,24 +18,9 @@
 
 ## The Problem
 
-```
- 09:00  ──────────────────────────────────────────── 09:06
-        │                                           │
-        │  TanStack CI breached                     │
-        │  84 malicious artifacts published         │
-        │  42 packages compromised                  │
-        │  160+ downstream packages hit             │
-        │                                           │
-        ▼                                           ▼
-   ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐
-   │ Service │───▶│ Service │───▶│ Service │───▶│ Service │
-   │    A    │    │    B    │    │    C    │    │    D    │
-   └─────────┘    └─────────┘    └─────────┘    └─────────┘
-        │              │              │              │
-        └──────────────┴──────────────┴──────────────┘
-                              │
-                     Which are exposed?
-```
+<p align="center">
+  <img src="public/problem.svg" alt="The Problem" width="700" />
+</p>
 
 These are **graph traversal questions**. A vector index cannot answer them.
 
@@ -43,28 +28,9 @@ These are **graph traversal questions**. A vector index cannot answer them.
 
 ## The Solution
 
-```
-  ┌──────────────────────────────────────────────────────────┐
-  │                                                          │
-  │    Paste:  tanstack/react-virtual@3.10.8                 │
-  │                                                          │
-  │  ┌────────────────────────────────────────────────────┐  │
-  │  │  CRIT  17 services exposed  6 lockfiles resolved  │  │
-  │  │  fix:  pnpm update tanstack/react-virtual@^3.10.9  │  │
-  │  └────────────────────────────────────────────────────┘  │
-  │                                                          │
-  │  ┌───────────┐  ┌───────────┐  ┌───────────┐            │
-  │  │ Exposed   │  │ Version   │  │ Lockfile  │            │
-  │  │ Services  │  │ Intro     │  │ Consumers │            │
-  │  │    17     │  │  3.10.8   │  │     6     │            │
-  │  └───────────┘  └───────────┘  └───────────┘            │
-  │  ┌───────────┐  ┌───────────┐  ┌───────────┐            │
-  │  │ Sibling   │  │ Typosquats│  │ Blast     │            │
-  │  │ Packages  │  │           │  │ Radius    │            │
-  │  │     5     │  │     6     │  │    29     │            │
-  │  └───────────┘  └───────────┘  └───────────┘            │
-  └──────────────────────────────────────────────────────────┘
-```
+<p align="center">
+  <img src="public/solution.svg" alt="The Solution" width="700" />
+</p>
 
 ---
 
@@ -74,28 +40,9 @@ Meridian stores the dependency graph in HydraDB and runs six deterministic Cyphe
 
 ### Data Model
 
-```
-                       ┌────────────┐
-                       │ Maintainer │
-                       └─────┬──────┘
-                             │ MAINTAINED_BY
-                       ┌─────▼─────┐
-┌──────────┐ DEPENDS_ON ┌─────────┐ HAS_VERSION ┌─────────┐
-│ Service  │───────────▶│ Package │────────────▶│ Version │
-└──────────┘            └────┬────┘            └────┬────┘
-                             │                      │
-                      TYPOSQUAT_OF               AFFECTS
-                             │                      │
-                      ┌──────▼──────┐        ┌──────▼──────┐
-                      │  Candidate  │        │  Advisory   │
-                      └─────────────┘        └──────┬──────┘
-                                                    │
-                                               RESOLVES
-                                                    │
-                                              ┌─────▼─────┐
-                                              │  Lockfile │
-                                              └───────────┘
-```
+<p align="center">
+  <img src="public/datamodel.svg" alt="Data Model" width="700" />
+</p>
 
 ### The Six Queries
 

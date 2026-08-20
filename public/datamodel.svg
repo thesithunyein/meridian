@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" font-family="Inter, system-ui, sans-serif">
+  <defs>
+    <filter id="s" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.12"/>
+    </filter>
+    <linearGradient id="purple" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6366f1"/>
+      <stop offset="100%" style="stop-color:#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="teal" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#06b6d4"/>
+      <stop offset="100%" style="stop-color:#22d3ee"/>
+    </linearGradient>
+    <linearGradient id="orange" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f97316"/>
+      <stop offset="100%" style="stop-color:#fb923c"/>
+    </linearGradient>
+    <linearGradient id="pink" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ec4899"/>
+      <stop offset="100%" style="stop-color:#f472b6"/>
+    </linearGradient>
+    <marker id="a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a78bfa"/>
+    </marker>
+    <marker id="b" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#f97316"/>
+    </marker>
+  </defs>
+
+  <rect width="800" height="400" fill="#fafafa" rx="12"/>
+
+  <text x="400" y="30" text-anchor="middle" font-size="14" font-weight="700" fill="#1e1b4b">HydraDB Data Model</text>
+  <text x="400" y="48" text-anchor="middle" font-size="10" fill="#6b7280">5 node types · 6 relationship types · OpenCypher queries</text>
+
+  <!-- Maintainer node -->
+  <rect x="330" y="70" width="140" height="50" rx="10" fill="url(#pink)" filter="url(#s)"/>
+  <text x="400" y="92" text-anchor="middle" font-size="11" font-weight="700" fill="white">Maintainer</text>
+  <text x="400" y="108" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.8)">handle · ecosystem</text>
+
+  <!-- Arrow Maintainer -> Package -->
+  <line x1="400" y1="120" x2="400" y2="155" stroke="#f472b6" stroke-width="2" marker-end="url(#a)"/>
+  <text x="420" y="142" font-size="8" fill="#ec4899">MAINTAINED_BY</text>
+
+  <!-- Package node -->
+  <rect x="330" y="158" width="140" height="50" rx="10" fill="url(#purple)" filter="url(#s)"/>
+  <text x="400" y="180" text-anchor="middle" font-size="11" font-weight="700" fill="white">Package</text>
+  <text x="400" y="196" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.8)">name · ecosystem</text>
+
+  <!-- Service node (left) -->
+  <rect x="80" y="158" width="140" height="50" rx="10" fill="url(#teal)" filter="url(#s)"/>
+  <text x="150" y="180" text-anchor="middle" font-size="11" font-weight="700" fill="white">Service</text>
+  <text x="150" y="196" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.8)">name · team · env</text>
+
+  <!-- Arrow Service -> Package -->
+  <line x1="220" y1="183" x2="330" y2="183" stroke="#22d3ee" stroke-width="2" marker-end="url(#a)"/>
+  <text x="275" y="176" text-anchor="middle" font-size="8" fill="#06b6d4">DEPENDS_ON</text>
+
+  <!-- Candidate node (left below) -->
+  <rect x="80" y="250" width="140" height="50" rx="10" fill="url(#teal)" filter="url(#s)" opacity="0.7"/>
+  <text x="150" y="272" text-anchor="middle" font-size="11" font-weight="700" fill="white">Candidate</text>
+  <text x="150" y="288" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.8)">typosquat</text>
+
+  <!-- Arrow Candidate -> Package -->
+  <line x1="220" y1="263" x2="330" y2="208" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#a)"/>
+  <text x="260" y="240" text-anchor="middle" font-size="8" fill="#06b6d4">TYPOSQUAT_OF</text>
+
+  <!-- Version node -->
+  <rect x="550" y="158" width="140" height="50" rx="10" fill="url(#purple)" filter="url(#s)" opacity="0.85"/>
+  <text x="620" y="180" text-anchor="middle" font-size="11" font-weight="700" fill="white">Version</text>
+  <text x="620" y="196" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.8)">version · published</text>
+
+  <!-- Arrow Package -> Version -->
+  <line x1="470" y1="183" x2="550" y2="183" stroke="#a78bfa" stroke-width="2" marker-end="url(#a)"/>
+  <text x="510" y="176" text-anchor="middle" font-size="8" fill="#7c3aed">HAS_VERSION</text>
+
+  <!-- Advisory node -->
+  <rect x="550" y="250" width="140" height="50" rx="10" fill="url(#orange)" filter="url(#s)"/>
+  <text x="620" y="272" text-anchor="middle" font-size="11" font-weight="700" fill="white">Advisory</text>
+  <text x="620" y="288" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.8)">severity · summary</text>
+
+  <!-- Arrow Advisory -> Version -->
+  <line x1="620" y1="250" x2="620" y2="208" stroke="#f97316" stroke-width="2" marker-end="url(#b)"/>
+  <text x="640" y="232" font-size="8" fill="#f97316">AFFECTS</text>
+
+  <!-- Lockfile node -->
+  <rect x="550" y="340" width="140" height="50" rx="10" fill="url(#orange)" filter="url(#s)" opacity="0.85"/>
+  <text x="620" y="362" text-anchor="middle" font-size="11" font-weight="700" fill="white">Lockfile</text>
+  <text x="620" y="378" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.8)">path · service</text>
+
+  <!-- Arrow Lockfile -> Version -->
+  <line x1="620" y1="340" x2="620" y2="208" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#b)"/>
+  <text x="640" y="320" font-size="8" fill="#f97316">RESOLVES</text>
+
+  <!-- Sibling arrow (Maintainer -> Package via Maintainer) -->
+  <path d="M 330 95 Q 200 95 200 158" fill="none" stroke="#f472b6" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#a)"/>
+  <text x="230" y="110" font-size="8" fill="#ec4899">SIBLING_OF</text>
+
+  <!-- Legend -->
+  <rect x="60" y="320" width="200" height="70" rx="8" fill="white" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="80" y="340" font-size="9" font-weight="600" fill="#374151">Relationships</text>
+  <circle cx="80" cy="355" r="4" fill="#22d3ee"/>
+  <text x="90" y="358" font-size="8" fill="#6b7280">DEPENDS_ON · TYPOSQUAT_OF</text>
+  <circle cx="80" cy="372" r="4" fill="#a78bfa"/>
+  <text x="90" y="375" font-size="8" fill="#6b7280">HAS_VERSION · SIBLING_OF</text>
+  <circle cx="170" cy="355" r="4" fill="#f97316"/>
+  <text x="180" y="358" font-size="8" fill="#6b7280">AFFECTS · RESOLVES</text>
+</svg>
