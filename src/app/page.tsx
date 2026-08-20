@@ -159,7 +159,7 @@ export default function Home() {
 
             <p className="lede appear appear--soft">
               Paste a package name. Meridian walks your dependency graph six hops deep
-              and tells you exactly which services are exposed — in plain English, in seconds.
+              and tells you which services are exposed, in plain English, in seconds.
             </p>
 
             {/* Interactive search */}
