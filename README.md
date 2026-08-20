@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/hackhydra-logo.png" alt="HackHydra" width="48" style="border-radius: 8px;" />
+  <img src="public/meridian-logo.png" alt="Meridian" width="80" style="border-radius: 12px;" />
 </p>
 
 <h1 align="center">Meridian</h1>
