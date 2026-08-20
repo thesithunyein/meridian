@@ -14,6 +14,12 @@
 
 <p align="center">Six deterministic Cypher queries against <a href="https://github.com/hydra-db/hydradb"><strong>HydraDB</strong></a>.<br/>No LLM. No vector search. Reproducible to the byte.</p>
 
+<p align="center">
+  <img src="public/solution.svg" alt="Meridian Scan" width="700" />
+</p>
+
+<p align="center"><strong>Without HydraDB, Meridian cannot walk 6-hop dependency trees, run deterministic Cypher queries, or output HydraDB-compatible benchmarks.</strong></p>
+
 ---
 
 ## The Problem
@@ -106,13 +112,9 @@ HYDRADB_URL=http://localhost:8443 pnpm dev
 
 ## Performance
 
-```
-  Cold Start              Warm (1k queries)
-  ──────────              ─────────────────
-  250ms total             80ms total
-  110ms tile 1            22ms tile 1
-                            <60us p95
-```
+<p align="center">
+  <img src="public/performance.svg" alt="Performance" width="600" />
+</p>
 
 ---
 
