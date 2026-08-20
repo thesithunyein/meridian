@@ -787,6 +787,9 @@ main, .app-main {
   border: 1px solid rgba(255,255,255,0.06);
   border-radius: 6px;
 }
+.glass-card--level-1 {
+  padding: 0;
+}
 .glass-card-header {
   display: flex;
   align-items: center;

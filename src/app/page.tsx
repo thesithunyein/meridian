@@ -41,6 +41,13 @@ const STEPS = [
   { num: "3", title: "Copy the fix", body: "One shell command at the top of the page. Paste it into your terminal. Done." },
 ];
 
+const EXPLOITS = [
+  { pkg: "tanstack/react-virtual@3.10.8", note: "TanStack worm", sev: "crit", services: 17 },
+  { pkg: "evil-pkg@1.0.0", note: "CVE-2026-1337", sev: "high", services: 17 },
+  { pkg: "ua-parser-js@0.7.30", note: "predetermined-bad", sev: "warn", services: 4 },
+  { pkg: "lodash", note: "clean baseline", sev: "ok", services: 0 },
+] as const;
+
 const FAQ: Array<{ q: string; body: string }> = [
   {
     q: "What packages can I scan?",
@@ -171,7 +178,7 @@ export default function Home() {
                 />
                 <button type="submit" className="btn btn-solid search-btn">Scan</button>
               </div>
-              <p className="search-hint">Try: evil-pkg ÃÂ· ua-parser-js ÃÂ· node-ipc ÃÂ· event-stream</p>
+              <p className="search-hint">Try: evil-pkg · ua-parser-js · node-ipc · event-stream</p>
             </form>
           </div>
         </main>
@@ -181,15 +188,15 @@ export default function Home() {
       <footer className="stats" id="stats">
         <span className="stat appear appear--stat">
           <svg viewBox="0 0 24 24" className="stat-icon" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="currentColor" opacity=".5"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="currentColor" opacity=".7"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="currentColor" opacity=".7"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="currentColor" opacity=".5"/></svg>
-          <span>{stats ? `${stats.packages.toLocaleString()} packages indexed` : "Loading graphÃ¢ÂÂ¦"}</span>
+          <span>{stats ? `${stats.packages.toLocaleString()} packages indexed` : "Loading graph…"}</span>
         </span>
         <span className="stat appear appear--stat">
           <svg viewBox="0 0 24 24" className="stat-icon" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" fill="none"/><path d="M12 7v5l3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-          <span>6 queries ÃÂ· &lt;300ms</span>
+          <span>6 queries · &lt;300ms</span>
         </span>
         <span className="stat appear appear--stat">
           <svg viewBox="0 0 24 24" className="stat-icon" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" opacity=".5"/><path d="M2 17l10 5 10-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/><path d="M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/></svg>
-          <span>Apache-2.0 ÃÂ· Free forever</span>
+          <span>Apache-2.0 · Free forever</span>
         </span>
       </footer>
 
@@ -227,7 +234,7 @@ export default function Home() {
             ))}
           </div>
           <div className="text-center mt-8">
-            <Link href="/how" className="btn btn-ghost">Read the full docs Ã¢ÂÂ</Link>
+            <Link href="/how" className="btn btn-ghost">Read the full docs →Â</Link>
           </div>
         </div>
       </section>
@@ -251,6 +258,52 @@ export default function Home() {
               <div className="trust-value">No tracking</div>
               <p>No package names sent, no analytics, no cookies. Your dependency graph stays on your machine.</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---- RECENT EXPLOITS ---- */}
+      <section className="section">
+        <div className="section-inner">
+          <h2 className="appear appear--soft">Recent exploits</h2>
+          <p className="lede appear appear--soft" style={{ maxWidth: 560 }}>
+            Known compromises you can scan right now. Each one lights up the six tiles
+            and produces a verdict in under 300ms.
+          </p>
+          <div className="table-card appear appear--scale">
+            <table className="meridian-table">
+              <thead>
+                <tr>
+                  <th>package</th>
+                  <th>note</th>
+                  <th>severity</th>
+                  <th>services</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {EXPLOITS.map((e) => (
+                  <tr key={e.pkg}>
+                    <td className="cell-mono text-ink-50">{e.pkg}</td>
+                    <td className="text-ink-300">{e.note}</td>
+                    <td>
+                      <span className={`bullet-bordered bullet-bordered--${e.sev}`}>
+                        {e.sev.toUpperCase()}
+                      </span>
+                    </td>
+                    <td className="cell-mono text-ink-200">{e.services}</td>
+                    <td>
+                      <Link
+                        href={`/scan/${encodeURIComponent(e.pkg)}`}
+                        className="btn-ghost-mini"
+                      >
+                        scan
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
