@@ -1,132 +1,109 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 620" font-family="Inter, system-ui, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" font-family="Inter, system-ui, sans-serif">
   <defs>
-    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
-      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.15"/>
+    <filter id="s" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.1"/>
     </filter>
-    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    <linearGradient id="purple" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6366f1"/>
+      <stop offset="100%" style="stop-color:#8b5cf6"/>
     </linearGradient>
-    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#22d3ee;stop-opacity:1" />
+    <linearGradient id="teal" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#06b6d4"/>
+      <stop offset="100%" style="stop-color:#22d3ee"/>
     </linearGradient>
-    <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#fb923c;stop-opacity:1" />
+    <linearGradient id="orange" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f97316"/>
+      <stop offset="100%" style="stop-color:#fb923c"/>
     </linearGradient>
-    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+    <linearGradient id="green" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#22c55e"/>
+      <stop offset="100%" style="stop-color:#4ade80"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
       <polygon points="0 0, 10 3.5, 0 7" fill="#a78bfa"/>
     </marker>
   </defs>
 
-  <!-- Background -->
-  <rect width="900" height="620" fill="#fafafa" rx="12"/>
+  <rect width="800" height="500" fill="#fafafa" rx="12"/>
 
-  <!-- Title -->
-  <text x="450" y="35" text-anchor="middle" font-size="16" font-weight="700" fill="#1e1b4b">Meridian Architecture</text>
-  <text x="450" y="52" text-anchor="middle" font-size="11" fill="#6b7280">Supply chain blast-radius engine powered by HydraDB</text>
+  <text x="400" y="32" text-anchor="middle" font-size="15" font-weight="700" fill="#1e1b4b">Architecture</text>
 
-  <!-- User Input -->
-  <rect x="340" y="70" width="220" height="44" rx="22" fill="white" stroke="#c4b5fd" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="410" y="97" text-anchor="middle" font-size="12" font-weight="600" fill="#5b21b6">&#x1F50D; Paste Package Name</text>
+  <!-- Layer 1: User -->
+  <rect x="330" y="55" width="140" height="44" rx="22" fill="url(#purple)" filter="url(#s)"/>
+  <text x="400" y="82" text-anchor="middle" font-size="12" font-weight="600" fill="white">User Input</text>
 
   <!-- Arrow down -->
-  <line x1="450" y1="114" x2="450" y2="145" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="400" y1="99" x2="400" y2="125" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrow)"/>
 
-  <!-- Next.js Box -->
-  <rect x="280" y="148" width="340" height="56" rx="8" fill="white" stroke="#c4b5fd" stroke-width="1.5" filter="url(#shadow)"/>
-  <rect x="280" y="148" width="340" height="56" rx="8" fill="url(#grad1)" opacity="0.08"/>
-  <text x="450" y="172" text-anchor="middle" font-size="13" font-weight="700" fill="#5b21b6">Next.js 14 App Router</text>
-  <text x="450" y="190" text-anchor="middle" font-size="10" fill="#7c3aed">Landing  |  Scan  |  Replay  |  Bench  |  How</text>
-
-  <!-- Arrow down -->
-  <line x1="450" y1="204" x2="450" y2="235" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrowhead)"/>
-
-  <!-- API Layer -->
-  <rect x="280" y="238" width="340" height="44" rx="8" fill="white" stroke="#a5b4fc" stroke-width="1.5" filter="url(#shadow)"/>
-  <rect x="280" y="238" width="340" height="44" rx="8" fill="url(#grad2)" opacity="0.08"/>
-  <text x="450" y="265" text-anchor="middle" font-size="12" font-weight="600" fill="#0e7490">API Layer</text>
-  <text x="450" y="258" text-anchor="middle" font-size="9" fill="#6b7280">/api/scan/[pkg]  /api/bench  /api/health  /api/stats</text>
+  <!-- Layer 2: Frontend -->
+  <rect x="180" y="128" width="440" height="50" rx="10" fill="white" stroke="#c4b5fd" stroke-width="1.5" filter="url(#s)"/>
+  <text x="400" y="150" text-anchor="middle" font-size="12" font-weight="700" fill="#5b21b6">Next.js 14 Frontend</text>
+  <text x="400" y="166" text-anchor="middle" font-size="9" fill="#6b7280">Landing · Scan · Replay · Bench · How</text>
 
   <!-- Arrow down -->
-  <line x1="450" y1="282" x2="450" y2="313" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="400" y1="178" x2="400" y2="204" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrow)"/>
 
-  <!-- HydraDB Client -->
-  <rect x="310" y="316" width="280" height="44" rx="8" fill="white" stroke="#a5b4fc" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="450" y="343" text-anchor="middle" font-size="12" font-weight="600" fill="#0e7490">HydraDB Client</text>
-  <text x="450" y="336" text-anchor="middle" font-size="9" fill="#6b7280">Bolt + HTTPS transports</text>
+  <!-- Layer 3: API -->
+  <rect x="180" y="207" width="440" height="50" rx="10" fill="white" stroke="#a5b4fc" stroke-width="1.5" filter="url(#s)"/>
+  <text x="400" y="229" text-anchor="middle" font-size="12" font-weight="700" fill="#4338ca">API Routes</text>
+  <text x="400" y="245" text-anchor="middle" font-size="9" fill="#6b7280">/api/scan · /api/bench · /api/health · /api/stats</text>
 
   <!-- Arrow down -->
-  <line x1="450" y1="360" x2="450" y2="391" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="400" y1="257" x2="400" y2="283" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrow)"/>
 
-  <!-- HydraDB Box (dashed border) -->
-  <rect x="140" y="394" width="620" height="140" rx="12" fill="white" stroke="#f97316" stroke-width="2" stroke-dasharray="6,3" filter="url(#shadow)"/>
-  <rect x="140" y="394" width="620" height="140" rx="12" fill="url(#grad3)" opacity="0.04"/>
-  <text x="680" y="414" text-anchor="end" font-size="9" font-weight="600" fill="#f97316">HydraDB 0.7.2</text>
+  <!-- Layer 4: HydraDB Client -->
+  <rect x="250" y="286" width="300" height="44" rx="10" fill="white" stroke="#22d3ee" stroke-width="1.5" filter="url(#s)"/>
+  <text x="400" y="313" text-anchor="middle" font-size="12" font-weight="700" fill="#0891b2">HydraDB Client</text>
+  <text x="400" y="306" text-anchor="middle" font-size="9" fill="#6b7280">Bolt + HTTPS transports</text>
+
+  <!-- Arrow down -->
+  <line x1="400" y1="330" x2="400" y2="356" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Layer 5: HydraDB -->
+  <rect x="120" y="359" width="560" height="110" rx="12" fill="white" stroke="#f97316" stroke-width="2" stroke-dasharray="6,3" filter="url(#s)"/>
+  <rect x="120" y="359" width="560" height="110" rx="12" fill="#fff7ed" opacity="0.5"/>
+  <text x="620" y="379" text-anchor="end" font-size="9" font-weight="600" fill="#f97316">HydraDB 0.7.2</text>
 
   <!-- Cypher Engine -->
-  <rect x="310" y="410" width="280" height="36" rx="6" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
-  <text x="450" y="433" text-anchor="middle" font-size="11" font-weight="600" fill="#c2410c">Cypher Engine (6 Queries)</text>
+  <rect x="250" y="375" width="300" height="32" rx="6" fill="url(#orange)" filter="url(#s)"/>
+  <text x="400" y="396" text-anchor="middle" font-size="11" font-weight="700" fill="white">Cypher Engine</text>
 
-  <!-- Graph Nodes -->
-  <rect x="160" y="460" width="110" height="32" rx="6" fill="#fff" stroke="#c4b5fd" stroke-width="1"/>
-  <text x="215" y="481" text-anchor="middle" font-size="10" font-weight="500" fill="#5b21b6">Package</text>
+  <!-- Graph nodes -->
+  <rect x="140" y="420" width="80" height="32" rx="6" fill="#fff" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="180" y="441" text-anchor="middle" font-size="10" font-weight="500" fill="#5b21b6">Package</text>
 
-  <rect x="285" y="460" width="110" height="32" rx="6" fill="#fff" stroke="#c4b5fd" stroke-width="1"/>
-  <text x="340" y="481" text-anchor="middle" font-size="10" font-weight="500" fill="#5b21b6">Version</text>
+  <rect x="235" y="420" width="80" height="32" rx="6" fill="#fff" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="275" y="441" text-anchor="middle" font-size="10" font-weight="500" fill="#5b21b6">Version</text>
 
-  <rect x="410" y="460" width="110" height="32" rx="6" fill="#fff" stroke="#c4b5fd" stroke-width="1"/>
-  <text x="465" y="481" text-anchor="middle" font-size="10" font-weight="500" fill="#5b21b6">Advisory</text>
+  <rect x="330" y="420" width="80" height="32" rx="6" fill="#fff" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="370" y="441" text-anchor="middle" font-size="10" font-weight="500" fill="#5b21b6">Advisory</text>
 
-  <rect x="535" y="460" width="110" height="32" rx="6" fill="#fff" stroke="#c4b5fd" stroke-width="1"/>
-  <text x="590" y="481" text-anchor="middle" font-size="10" font-weight="500" fill="#5b21b6">Lockfile</text>
+  <rect x="425" y="420" width="80" height="32" rx="6" fill="#fff" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="465" y="441" text-anchor="middle" font-size="10" font-weight="500" fill="#5b21b6">Lockfile</text>
 
-  <rect x="660" y="460" width="90" height="32" rx="6" fill="#fff" stroke="#c4b5fd" stroke-width="1"/>
-  <text x="705" y="481" text-anchor="middle" font-size="10" font-weight="500" fill="#5b21b6">Maintainer</text>
+  <rect x="520" y="420" width="90" height="32" rx="6" fill="#fff" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="565" y="441" text-anchor="middle" font-size="10" font-weight="500" fill="#5b21b6">Maintainer</text>
 
-  <!-- Edge labels -->
-  <text x="250" y="508" text-anchor="middle" font-size="8" fill="#9ca3af">DEPENDS_ON</text>
-  <text x="375" y="508" text-anchor="middle" font-size="8" fill="#9ca3af">HAS_VERSION</text>
-  <text x="500" y="508" text-anchor="middle" font-size="8" fill="#9ca3af">AFFECTS</text>
-  <text x="625" y="508" text-anchor="middle" font-size="8" fill="#9ca3af">RESOLVES</text>
-  <text x="705" y="508" text-anchor="middle" font-size="8" fill="#9ca3af">MAINTAINED_BY</text>
+  <rect x="625" y="420" width="40" height="32" rx="6" fill="#fff" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="645" y="441" text-anchor="middle" font-size="10" font-weight="500" fill="#5b21b6">+4</text>
 
-  <!-- Arrows from graph nodes to edges -->
-  <line x1="270" y1="476" x2="285" y2="476" stroke="#d8b4fe" stroke-width="1" marker-end="url(#arrowhead)"/>
-  <line x1="395" y1="476" x2="410" y2="476" stroke="#d8b4fe" stroke-width="1" marker-end="url(#arrowhead)"/>
-  <line x1="520" y1="476" x2="535" y2="476" stroke="#d8b4fe" stroke-width="1" marker-end="url(#arrowhead)"/>
-  <line x1="645" y1="476" x2="660" y2="476" stroke="#d8b4fe" stroke-width="1" marker-end="url(#arrowhead)"/>
+  <!-- Output arrows (right side) -->
+  <line x1="620" y1="155" x2="680" y2="155" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+  <rect x="685" y="138" width="100" height="34" rx="8" fill="#ecfdf5" stroke="#34d399" stroke-width="1"/>
+  <text x="735" y="160" text-anchor="middle" font-size="10" font-weight="600" fill="#059669">Verdict + Fix</text>
 
-  <!-- Output boxes on the right -->
-  <!-- Verdict -->
-  <rect x="770" y="148" width="110" height="44" rx="8" fill="#ecfdf5" stroke="#34d399" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="825" y="168" text-anchor="middle" font-size="10" font-weight="600" fill="#059669">Verdict</text>
-  <text x="825" y="182" text-anchor="middle" font-size="9" fill="#6b7280">+ Fix Command</text>
+  <line x1="620" y1="232" x2="680" y2="232" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+  <rect x="685" y="215" width="100" height="34" rx="8" fill="#eff6ff" stroke="#60a5fa" stroke-width="1"/>
+  <text x="735" y="237" text-anchor="middle" font-size="10" font-weight="600" fill="#2563eb">6 Tiles</text>
 
-  <line x1="620" y1="176" x2="770" y2="176" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrowhead)"/>
+  <line x1="620" y1="310" x2="680" y2="310" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+  <rect x="685" y="293" width="100" height="34" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="735" y="315" text-anchor="middle" font-size="10" font-weight="600" fill="#d97706">Worm Trace</text>
 
-  <!-- 6 Tiles -->
-  <rect x="770" y="210" width="110" height="44" rx="8" fill="#eff6ff" stroke="#60a5fa" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="825" y="230" text-anchor="middle" font-size="10" font-weight="600" fill="#2563eb">6 Tiles</text>
-  <text x="825" y="244" text-anchor="middle" font-size="9" fill="#6b7280">Cypher Queries</text>
-
-  <line x1="620" y1="260" x2="770" y2="232" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrowhead)"/>
-
-  <!-- Worm Trace -->
-  <rect x="770" y="272" width="110" height="44" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="825" y="292" text-anchor="middle" font-size="10" font-weight="600" fill="#d97706">Worm Trace</text>
-  <text x="825" y="306" text-anchor="middle" font-size="9" fill="#6b7280">Timeline</text>
-
-  <line x1="620" y1="340" x2="770" y2="294" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrowhead)"/>
-
-  <!-- Bench -->
-  <rect x="770" y="334" width="110" height="44" rx="8" fill="#fce7f3" stroke="#f472b6" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="825" y="354" text-anchor="middle" font-size="10" font-weight="600" fill="#db2777">Bench CSV</text>
-  <text x="825" y="368" text-anchor="middle" font-size="9" fill="#6b7280">Performance</text>
-
-  <line x1="620" y1="380" x2="770" y2="356" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrowhead)"/>
+  <line x1="620" y1="391" x2="680" y2="391" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+  <rect x="685" y="374" width="100" height="34" rx="8" fill="#fce7f3" stroke="#f472b6" stroke-width="1"/>
+  <text x="735" y="396" text-anchor="middle" font-size="10" font-weight="600" fill="#db2777">Bench CSV</text>
 
   <!-- Footer -->
-  <text x="450" y="600" text-anchor="middle" font-size="10" fill="#9ca3af">meridian.sithunyein.com  |  github.com/thesithunyein/meridian  |  Apache-2.0</text>
+  <text x="400" y="495" text-anchor="middle" font-size="9" fill="#9ca3af">meridian.sithunyein.com  ·  Apache-2.0  ·  Powered by HydraDB</text>
 </svg>
