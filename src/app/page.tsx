@@ -208,9 +208,9 @@ export default function Home() {
             {BENEFITS.map((b) => (
               <article key={b.title} className="benefit-card appear appear--scale">
                 <div className="benefit-icon">
-                  {b.icon === "zap" && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 9l3 3-3 3"/><path d="M13 15h3"/><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 20v-1a5 5 0 0 1 5-5h0a5 5 0 0 1 5 5v1"/></svg>}
-                  {b.icon === "shield" && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>}
-                  {b.icon === "lock" && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1"/><path d="M12 17v2"/></svg>}
+                  {b.icon === "zap" && <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 3h6v4H9V3zm0 6h6v4H9V9zm0 6h6v4H9v-4zm-4 2h2v2H5v-2zm14 0h2v2h-2v-2zM5 5h2v2H5V5zm14 0h2v2h-2V5z"/></svg>}
+                  {b.icon === "shield" && <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L3 7v5c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5zm-1 14l-4-4 1.41-1.41L11 13.17l6.59-6.59L19 8l-8 8z"/></svg>}
+                  {b.icon === "lock" && <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>}
                 </div>
                 <h3>{b.title}</h3>
                 <p>{b.body}</p>
